@@ -16,7 +16,7 @@ A Very Good Infinite List Widget used internally at [Very Good Ventures][very_go
 
 ## Usage
 
-To make a simple `InfiniteList` requires two parameters:
+A basic `InfiniteList` requires two parameters:
 
 - `itemLoader` which is responsible for asynchronously fetching the content
 - `builder` which is responsible for returning a `Widget` given a specific item (result)
