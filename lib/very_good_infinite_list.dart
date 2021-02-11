@@ -114,7 +114,7 @@ class InfiniteList<T> extends StatefulWidget {
     @required this.builder,
     WidgetBuilder bottomLoader,
     ErrorBuilder errorLoader,
-    this.debounce,
+    this.debounceDuration,
     this.onError,
     double scrollOffsetThreshold,
   })  : assert(itemLoader != null),
@@ -163,8 +163,8 @@ class InfiniteList<T> extends StatefulWidget {
   final OnError onError;
 
   /// Debounce duration for the [itemLoader].
-  /// Defaults to `const Duration(milliseconds: 300)`.
-  final Duration debounce;
+  /// Defaults to `const Duration(milliseconds: 100)`.
+  final Duration debounceDuration;
 
   final double _scrollOffsetThreshold;
 
@@ -192,7 +192,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
   void initState() {
     super.initState();
     _controller = _ListController<T>(widget.itemLoader);
-    _debouncer = _Debouncer(delay: widget.debounce);
+    _debouncer = _Debouncer(delay: widget.debounceDuration);
     _scrollController.addListener(_onScroll);
     _controller
       ..addListener(_onListStateChanged)
