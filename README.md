@@ -18,7 +18,7 @@ A Very Good Infinite List Widget created by [Very Good Ventures][very_good_ventu
 
 ## Example
 
-<a href="https://github.com/VeryGoodOpenSource/very_good_infinite_list/blob/main/example/lib/main.dart"><img src="art/infinite_list.gif" height="400"/></a>
+<a href="https://github.com/VeryGoodOpenSource/very_good_infinite_list/blob/main/example/lib/main.dart"><img src="https://raw.githubusercontent.com/VeryGoodOpenSource/very_good_infinite_list/main/art/infinite_list.gif" height="400"/></a>
 
 ## Usage
 
@@ -121,8 +121,7 @@ Refer to the [example](https://github.com/VeryGoodOpenSource/very_good_infinite_
 
 [ci_badge]: https://github.com/VeryGoodOpenSource/very_good_infinite_list/workflows/ci/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/very_good_infinite_list/actions
-[coverage_badge]: coverage_badge.svg
-[demo_gif]: art/infinite_list.gif
+[coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/very_good_infinite_list/main/coverage_badge.svg
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
 [pub_badge]: https://img.shields.io/pub/v/very_good_infinite_list.svg
