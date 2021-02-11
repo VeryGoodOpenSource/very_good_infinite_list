@@ -1,7 +1,7 @@
 name: very_good_infinite_list
 description: >-
   A Very Good Infinite List Widget created by Very Good Ventures.
-  Comes in handy when making activity feeds, news feeds, or any feature that involves lazily fetching and rendering content for users to consume.
+  Comes in handy when making activity feeds, news feeds, etc.
 version: 0.1.0
 repository: https://github.com/VeryGoodOpenSource/very_good_infinite_list
 issue_tracker: https://github.com/VeryGoodOpenSource/very_good_infinite_list/issues
