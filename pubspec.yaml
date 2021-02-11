@@ -1,0 +1,21 @@
+name: very_good_infinite_list
+description: A Very Good Infinite List Widget used internally at Very Good Ventures.
+version: 0.1.0
+repository: https://github.com/VeryGoodOpenSource/very_good_infinite_list
+issue_tracker: https://github.com/VeryGoodOpenSource/very_good_infinite_list/issues
+homepage: https://github.com/VeryGoodOpenSource/very_good_infinite_list
+documentation: https://github.com/VeryGoodOpenSource/very_good_infinite_list
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^6.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^1.0.4
