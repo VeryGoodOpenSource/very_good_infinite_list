@@ -1,3 +1,3 @@
-## [0.0.1] - TODO: Add release date.
+## [0.1.0] - 02/11/21
 
-* TODO: Describe initial release.
+- initial release of `InfiniteList` 🎉
