@@ -1,0 +1,20 @@
+name: example
+description: A new Flutter project.
+publish_to: none
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  very_good_infinite_list:
+    path: ../
+
+dev_dependencies:
+  very_good_analysis: ^1.0.4
+
+flutter:
+  uses-material-design: true
