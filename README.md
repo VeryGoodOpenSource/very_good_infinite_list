@@ -82,7 +82,8 @@ InfiniteList<String>(
   debounceDuration: Duration.zero,
   // What percentage of the screen should be scrolled before
   // attempting to load additional items.
-  scrollOffsetThreshold:
+  // Defaults to 0.7 (70% from the top).
+  scrollOffsetThreshold: 0.5,
 );
 ```
 
