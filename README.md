@@ -14,6 +14,12 @@ Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
 A Very Good Infinite List Widget used internally at [Very Good Ventures][very_good_ventures_link].
 
+`InfiniteList` comes in handy when building features like activity feeds, news feeds, or anywhere else where you need to lazily fetch and render content for users to consume.
+
+## Example
+
+<a href="https://github.com/VeryGoodOpenSource/very_good_infinite_list/blob/main/example/lib/main.dart"><img src="art/infinite_list.gif" height="400"/></a>
+
 ## Usage
 
 A basic `InfiniteList` requires two parameters:
@@ -56,7 +62,7 @@ class MyApp extends StatelessWidget {
 
 #### InfiniteList
 
-`InfiniteList` has multiple optional parameters which allow you to custom the loading and error behavior.
+`InfiniteList` has multiple optional parameters which allow you to customize the loading and error behavior.
 
 ```dart
 InfiniteList<String>(
@@ -116,6 +122,7 @@ Refer to the [example](https://github.com/VeryGoodOpenSource/very_good_infinite_
 [ci_badge]: https://github.com/VeryGoodOpenSource/very_good_infinite_list/workflows/ci/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/very_good_infinite_list/actions
 [coverage_badge]: coverage_badge.svg
+[demo_gif]: art/infinite_list.gif
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
 [pub_badge]: https://img.shields.io/pub/v/very_good_infinite_list.svg
