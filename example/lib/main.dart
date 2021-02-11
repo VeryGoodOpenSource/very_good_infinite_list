@@ -102,7 +102,7 @@ Future<List<String>> _itemLoader(int limit, {int start = 0}) async {
 class _Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
+    return const Center(child: CircularProgressIndicator());
   }
 }
 
@@ -130,8 +130,8 @@ class _Error extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           TextButton.icon(
-            icon: Icon(Icons.refresh),
-            label: Text('Retry'),
+            icon: const Icon(Icons.refresh),
+            label: const Text('Retry'),
             onPressed: retry,
           ),
         ],
@@ -148,8 +148,8 @@ class _ErrorLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: TextButton.icon(
-        icon: Icon(Icons.refresh),
-        label: Text('Retry'),
+        icon: const Icon(Icons.refresh),
+        label: const Text('Retry'),
         onPressed: retry,
       ),
     );
@@ -159,6 +159,6 @@ class _ErrorLoader extends StatelessWidget {
 class _Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Empty'));
+    return const Center(child: Text('Empty'));
   }
 }

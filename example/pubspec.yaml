@@ -13,5 +13,8 @@ dependencies:
   very_good_infinite_list:
     path: ../
 
+dev_dependencies:
+  very_good_analysis: ^1.0.4
+
 flutter:
   uses-material-design: true
