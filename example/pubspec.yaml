@@ -5,7 +5,7 @@ publish_to: none
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
 
 dependencies:
   flutter:
@@ -14,7 +14,7 @@ dependencies:
     path: ../
 
 dev_dependencies:
-  very_good_analysis: ^1.0.4
+  very_good_analysis: ^2.0.0-nullsafety.0
 
 flutter:
   uses-material-design: true

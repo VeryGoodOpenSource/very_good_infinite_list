@@ -19,7 +19,7 @@ class InfiniteListException implements Exception {}
 ///
 /// * [limit] is the number of items you'd like to fetch.
 /// * [start] is an optional offset which defaults to 0.
-typedef ItemLoader<T> = Future<List<T>> Function(int limit, {int start});
+typedef ItemLoader<T> = Future<List<T>?> Function(int limit, {int start});
 
 /// Function which returns a [Widget] given a [context], [retry], and [error].
 /// Used by [InfiniteList] to render widgets in response to exceptions thrown
