@@ -178,7 +178,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
   void _onListStateChanged() {
     final state = _controller.value;
     if (_isFailure(state)) {
-      widget.onError!.call(context, _controller.fetch, state.exception.value!);
+      widget.onError?.call(context, _controller.fetch, state.exception.value!);
     }
   }
 
@@ -421,11 +421,11 @@ class _Debouncer {
   Timer? _timer;
 
   void call(void Function() action) {
-    _timer!.cancel();
+    _timer?.cancel();
     _timer = Timer(_delay!, action);
   }
 
   void dispose() {
-    _timer!.cancel();
+    _timer?.cancel();
   }
 }
