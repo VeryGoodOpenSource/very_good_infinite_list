@@ -48,15 +48,15 @@ typedef OnError = void Function(
 class InfiniteListBuilder<T> {
   /// {@macro infinite_list_builder}
   const InfiniteListBuilder({
-    @required this.success,
-    WidgetBuilder loading,
-    ErrorBuilder error,
-    WidgetBuilder empty,
+    required this.success,
+    WidgetBuilder? loading,
+    ErrorBuilder? error,
+    WidgetBuilder? empty,
   })  : _loading = loading,
         _error = error,
         _empty = empty;
 
-  final WidgetBuilder _loading;
+  final WidgetBuilder? _loading;
 
   /// [WidgetBuilder] which is invoked when the [InfiniteList]
   /// is rendered while content is being fetched by the [ItemLoader].
@@ -73,7 +73,7 @@ class InfiniteListBuilder<T> {
   /// retrieved from the [ItemLoader].
   final Widget Function(BuildContext, T) success;
 
-  final ErrorBuilder _error;
+  final ErrorBuilder? _error;
 
   /// [WidgetBuilder] which is invoked when the [InfiniteList]
   /// is rendered and an [InfiniteListException]
@@ -89,7 +89,7 @@ class InfiniteListBuilder<T> {
         };
   }
 
-  final WidgetBuilder _empty;
+  final WidgetBuilder? _empty;
 
   /// [WidgetBuilder] which is invoked when the [InfiniteList]
   /// is rendered and the [ItemLoader] has returned an empty list.
@@ -109,17 +109,15 @@ class InfiniteListBuilder<T> {
 class InfiniteList<T> extends StatefulWidget {
   /// {@macro infinite_list}
   const InfiniteList({
-    Key key,
-    @required this.itemLoader,
-    @required this.builder,
-    WidgetBuilder bottomLoader,
-    ErrorBuilder errorLoader,
+    Key? key,
+    required this.itemLoader,
+    required this.builder,
+    WidgetBuilder? bottomLoader,
+    ErrorBuilder? errorLoader,
     this.debounceDuration,
     this.onError,
-    double scrollOffsetThreshold,
-  })  : assert(itemLoader != null),
-        assert(builder != null),
-        _bottomLoader = bottomLoader,
+    double? scrollOffsetThreshold,
+  })  : _bottomLoader = bottomLoader,
         _errorLoader = errorLoader,
         _scrollOffsetThreshold =
             scrollOffsetThreshold ?? _kScrollOffsetThreshold,
@@ -132,7 +130,7 @@ class InfiniteList<T> extends StatefulWidget {
   /// to lazily fetch content.
   final ItemLoader<T> itemLoader;
 
-  final WidgetBuilder _bottomLoader;
+  final WidgetBuilder? _bottomLoader;
 
   /// [WidgetBuilder] which is responsible for rendering the bottom loader
   /// widget which is rendered when the user scrolls to the bottom of the list
@@ -145,7 +143,7 @@ class InfiniteList<T> extends StatefulWidget {
             );
   }
 
-  final ErrorBuilder _errorLoader;
+  final ErrorBuilder? _errorLoader;
 
   /// [WidgetBuilder] which is responsible for rendering the bottom loader
   /// widget which is rendered when additional content is unable to be loaded
@@ -160,11 +158,11 @@ class InfiniteList<T> extends StatefulWidget {
           );
 
   /// {@macro on_error}
-  final OnError onError;
+  final OnError? onError;
 
   /// Debounce duration for the [itemLoader].
   /// Defaults to `const Duration(milliseconds: 100)`.
-  final Duration debounceDuration;
+  final Duration? debounceDuration;
 
   final double _scrollOffsetThreshold;
 
@@ -174,13 +172,13 @@ class InfiniteList<T> extends StatefulWidget {
 
 class _InfiniteListState<T> extends State<InfiniteList<T>> {
   final _scrollController = ScrollController();
-  _ListController<T> _controller;
-  _Debouncer _debouncer;
+  late _ListController<T> _controller;
+  late _Debouncer _debouncer;
 
   void _onListStateChanged() {
     final state = _controller.value;
     if (_isFailure(state)) {
-      widget.onError?.call(context, _controller.fetch, state.exception.value);
+      widget.onError!.call(context, _controller.fetch, state.exception.value!);
     }
   }
 
@@ -201,7 +199,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
 
   @override
   void dispose() {
-    _debouncer?.dispose();
+    _debouncer.dispose();
     _controller
       ..removeListener(_onListStateChanged)
       ..dispose();
@@ -215,7 +213,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: _controller,
-      builder: (context, state, child) {
+      builder: (context, _ListState<T> state, child) {
         final itemCount = state.hasReachedMax == false
             ? state.items.length + 1
             : state.items.length;
@@ -229,7 +227,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
               ? widget.builder.error(
                   context,
                   _controller.fetch,
-                  state.exception.value,
+                  state.exception.value!,
                 )
               : widget.builder.empty(context);
         }
@@ -238,7 +236,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
           return widget.builder.error(
             context,
             _controller.fetch,
-            state.exception.value,
+            state.exception.value!,
           );
         }
 
@@ -251,7 +249,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
                     ? widget.errorLoader(
                         context,
                         _controller.fetch,
-                        state.exception.value,
+                        state.exception.value!,
                       )
                     : widget.bottomLoader(context)
                 : widget.builder.success(context, state.items[index]);
@@ -277,13 +275,13 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
 
 class _DefaultError extends StatelessWidget {
   const _DefaultError({
-    Key key,
+    Key? key,
     this.error,
     this.retry,
   }) : super(key: key);
 
-  final Object error;
-  final VoidCallback retry;
+  final Object? error;
+  final VoidCallback? retry;
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +292,7 @@ class _DefaultError extends StatelessWidget {
         children: [
           Text(
             '$error',
-            style: theme.textTheme.headline4.copyWith(color: theme.errorColor),
+            style: theme.textTheme.headline4!.copyWith(color: theme.errorColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
@@ -309,7 +307,7 @@ class _DefaultError extends StatelessWidget {
 }
 
 class _DefaultErrorLoader extends StatelessWidget {
-  const _DefaultErrorLoader({Key key, @required this.retry}) : super(key: key);
+  const _DefaultErrorLoader({Key? key, required this.retry}) : super(key: key);
   final VoidCallback retry;
 
   @override
@@ -328,7 +326,7 @@ extension on _ListStatus {
 
 class _ListException implements Exception {
   const _ListException(this.value);
-  final Object value;
+  final Object? value;
 
   static const none = _ListException(null);
 }
@@ -349,11 +347,11 @@ class _ListState<T> {
   final _ListException exception;
 
   _ListState<T> copyWith({
-    @required _ListStatus status,
-    int currentIndex,
-    List<T> items,
-    bool hasReachedMax,
-    _ListException exception,
+    required _ListStatus status,
+    int? currentIndex,
+    List<T>? items,
+    bool? hasReachedMax,
+    _ListException? exception,
   }) {
     return _ListState<T>(
       currentIndex: currentIndex ?? this.currentIndex,
@@ -417,17 +415,17 @@ class _ListController<T> extends ValueNotifier<_ListState<T>> {
 }
 
 class _Debouncer {
-  _Debouncer({Duration delay}) : _delay = delay ?? _kDebounceDuration;
+  _Debouncer({Duration? delay}) : _delay = delay ?? _kDebounceDuration;
 
-  final Duration _delay;
-  Timer _timer;
+  final Duration? _delay;
+  Timer? _timer;
 
   void call(void Function() action) {
-    _timer?.cancel();
-    _timer = Timer(_delay, action);
+    _timer!.cancel();
+    _timer = Timer(_delay!, action);
   }
 
   void dispose() {
-    _timer?.cancel();
+    _timer!.cancel();
   }
 }
