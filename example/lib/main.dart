@@ -109,12 +109,12 @@ class _Loading extends StatelessWidget {
 class _Error extends StatelessWidget {
   const _Error({
     Key? key,
-    this.error,
-    this.retry,
+    required this.error,
+    required this.retry,
   }) : super(key: key);
 
-  final Object? error;
-  final VoidCallback? retry;
+  final Object error;
+  final VoidCallback retry;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +125,7 @@ class _Error extends StatelessWidget {
         children: [
           Text(
             error.toString(),
-            style: theme.textTheme.headline4!.copyWith(color: theme.errorColor),
+            style: theme.textTheme.headline4?.copyWith(color: theme.errorColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),

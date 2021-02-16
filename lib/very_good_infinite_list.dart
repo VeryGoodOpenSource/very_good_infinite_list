@@ -178,7 +178,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
   void _onListStateChanged() {
     final state = _controller.value;
     if (_isFailure(state)) {
-      widget.onError?.call(context, _controller.fetch, state.exception.value!);
+      widget.onError?.call(context, _controller.fetch, state.exception.value);
     }
   }
 
@@ -227,7 +227,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
               ? widget.builder.error(
                   context,
                   _controller.fetch,
-                  state.exception.value!,
+                  state.exception.value,
                 )
               : widget.builder.empty(context);
         }
@@ -236,7 +236,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
           return widget.builder.error(
             context,
             _controller.fetch,
-            state.exception.value!,
+            state.exception.value,
           );
         }
 
@@ -249,7 +249,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
                     ? widget.errorLoader(
                         context,
                         _controller.fetch,
-                        state.exception.value!,
+                        state.exception.value,
                       )
                     : widget.bottomLoader(context)
                 : widget.builder.success(context, state.items[index]);
@@ -276,12 +276,12 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
 class _DefaultError extends StatelessWidget {
   const _DefaultError({
     Key? key,
-    this.error,
-    this.retry,
+    required this.error,
+    required this.retry,
   }) : super(key: key);
 
-  final Object? error;
-  final VoidCallback? retry;
+  final Object error;
+  final VoidCallback retry;
 
   @override
   Widget build(BuildContext context) {
@@ -292,7 +292,7 @@ class _DefaultError extends StatelessWidget {
         children: [
           Text(
             '$error',
-            style: theme.textTheme.headline4!.copyWith(color: theme.errorColor),
+            style: theme.textTheme.headline4?.copyWith(color: theme.errorColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
@@ -326,9 +326,9 @@ extension on _ListStatus {
 
 class _ListException implements Exception {
   const _ListException(this.value);
-  final Object? value;
+  final Object value;
 
-  static const none = _ListException(null);
+  static const none = _ListException(Object());
 }
 
 class _ListState<T> {
@@ -417,12 +417,12 @@ class _ListController<T> extends ValueNotifier<_ListState<T>> {
 class _Debouncer {
   _Debouncer({Duration? delay}) : _delay = delay ?? _kDebounceDuration;
 
-  final Duration? _delay;
+  final Duration _delay;
   Timer? _timer;
 
   void call(void Function() action) {
     _timer?.cancel();
-    _timer = Timer(_delay!, action);
+    _timer = Timer(_delay, action);
   }
 
   void dispose() {
