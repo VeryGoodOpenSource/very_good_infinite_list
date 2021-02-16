@@ -5,31 +5,9 @@ import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 void main() {
   group('InfiniteList', () {
-    group('constructor', () {
-      test('throws AssertionError when itemLoader is null', () {
-        expect(
-          () => InfiniteList(
-            itemLoader: null,
-            builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-          ),
-          throwsAssertionError,
-        );
-      });
-
-      test('throws AssertionError when builder is null', () {
-        expect(
-          () => InfiniteList(
-            itemLoader: (int limit, {int start}) async => [],
-            builder: null,
-          ),
-          throwsAssertionError,
-        );
-      });
-    });
-
     testWidgets('invokes itemLoader immediately', (tester) async {
       var itemLoaderCallCount = 0;
-      final itemLoader = (int limit, {int start}) {
+      final itemLoader = (int limit, {int? start}) async {
         itemLoaderCallCount++;
       };
 
@@ -43,7 +21,7 @@ void main() {
 
     testWidgets('renders default loading widget by default', (tester) async {
       await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int start}) async => [],
+        itemLoader: (int limit, {int? start}) async => [],
         builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
       ));
 
@@ -53,7 +31,7 @@ void main() {
     testWidgets('renders default bottom loader widget by default',
         (tester) async {
       await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           return List.generate(1, (i) => i);
         },
         builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
@@ -71,15 +49,15 @@ void main() {
         (tester) async {
       var itemLoaderCallCount = 0;
       final itemLoaderResults = [
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           return List.generate(15, (i) => i);
         },
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           throw Exception('oops');
         },
       ];
       await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           itemLoaderCallCount++;
           return itemLoaderResults.removeAt(0).call(limit, start: start);
         },
@@ -121,15 +99,15 @@ void main() {
     testWidgets('renders default error widget by default', (tester) async {
       var itemLoaderCallCount = 0;
       final itemLoaderResults = [
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           return List.generate(15, (i) => i);
         },
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           throw InfiniteListException();
         },
       ];
       await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           itemLoaderCallCount++;
           return itemLoaderResults.removeAt(0).call(limit, start: start);
         },
@@ -171,15 +149,15 @@ void main() {
     testWidgets('retry from first time failure', (tester) async {
       var itemLoaderCallCount = 0;
       final itemLoaderResults = [
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           throw InfiniteListException();
         },
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           return List.generate(15, (i) => i);
         },
       ];
       await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           itemLoaderCallCount++;
           return itemLoaderResults.removeAt(0).call(limit, start: start);
         },
@@ -207,18 +185,18 @@ void main() {
     testWidgets('retry from subsequent failure (critical)', (tester) async {
       var itemLoaderCallCount = 0;
       final itemLoaderResults = [
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           return List.generate(15, (i) => i);
         },
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           throw InfiniteListException();
         },
-        (int limit, {int start}) async {
-          return List.generate(15, (i) => i + start);
+        (int limit, {int? start}) async {
+          return List.generate(15, (i) => i + start!);
         },
       ];
       await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           itemLoaderCallCount++;
           return itemLoaderResults.removeAt(0).call(limit, start: start);
         },
@@ -265,18 +243,18 @@ void main() {
     testWidgets('retry from subsequent failure', (tester) async {
       var itemLoaderCallCount = 0;
       final itemLoaderResults = [
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           return List.generate(15, (i) => i);
         },
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           throw Exception('oops');
         },
-        (int limit, {int start}) async {
-          return List.generate(15, (i) => i + start);
+        (int limit, {int? start}) async {
+          return List.generate(15, (i) => i + start!);
         },
       ];
       await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           itemLoaderCallCount++;
           return itemLoaderResults.removeAt(0).call(limit, start: start);
         },
@@ -324,13 +302,13 @@ void main() {
         (tester) async {
       var itemLoaderCallCount = 0;
       final itemLoaderResults = [
-        (int limit, {int start}) async {
+        (int limit, {int? start}) async {
           return List.generate(15, (i) => i);
         },
-        (int limit, {int start}) async => <int>[],
+        (int limit, {int? start}) async => <int>[],
       ];
       await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           itemLoaderCallCount++;
           return itemLoaderResults.removeAt(0).call(limit, start: start);
         },
@@ -375,7 +353,7 @@ void main() {
 
     testWidgets('renders default empty widget by default', (tester) async {
       await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int start}) async => [],
+        itemLoader: (int limit, {int? start}) async => [],
         builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
       ));
 
@@ -386,7 +364,7 @@ void main() {
     testWidgets('renders default error widget by default (generic)',
         (tester) async {
       await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           throw Exception('oops');
         },
         builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
@@ -399,7 +377,7 @@ void main() {
     testWidgets('renders default error widget by default (specific)',
         (tester) async {
       await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int start}) async {
+        itemLoader: (int limit, {int? start}) async {
           throw InfiniteListException();
         },
         builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
