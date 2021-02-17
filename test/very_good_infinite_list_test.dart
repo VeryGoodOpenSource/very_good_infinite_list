@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 void main() {
@@ -25,6 +24,107 @@ void main() {
           throwsAssertionError,
         );
       });
+    });
+
+    testWidgets('updates scroll controller when changed', (tester) async {
+      var itemLoaderCallCount = 0;
+      final itemLoader = (int limit, {int start}) async {
+        itemLoaderCallCount++;
+        return List.generate(15, (i) => i);
+      };
+      final oldController = ScrollController();
+      final newController = ScrollController();
+      var scrollController = oldController;
+
+      await tester.pumpApp(
+        StatefulBuilder(
+          builder: (context, setState) {
+            return Scaffold(
+              body: InfiniteList<int>(
+                itemLoader: itemLoader,
+                scrollController: scrollController,
+                builder: InfiniteListBuilder(
+                  success: (_, item) {
+                    return ListTile(
+                      key: Key('__item_${item}__'),
+                      title: Text('Item $item'),
+                    );
+                  },
+                ),
+              ),
+              floatingActionButton: FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () {
+                  setState(() {
+                    scrollController = newController;
+                  });
+                },
+              ),
+            );
+          },
+        ),
+      );
+
+      await tester.pump();
+
+      expect(itemLoaderCallCount, equals(1));
+
+      await tester.drag(
+        find.byKey(const Key('__item_0__')),
+        const Offset(0, -100),
+      );
+
+      await tester.pump();
+      expect(find.byKey(const Key('__item_0__')), findsNothing);
+      await tester.tap(find.byType(FloatingActionButton));
+
+      await tester.pump();
+
+      expect(oldController.hasClients, isFalse);
+      expect(newController.hasClients, isTrue);
+
+      newController.jumpTo(0);
+      await tester.pump();
+
+      expect(find.byKey(const Key('__item_0__')), findsOneWidget);
+      expect(itemLoaderCallCount, equals(1));
+    });
+
+    testWidgets('reverse updates list view', (tester) async {
+      final itemLoader = (int limit, {int start}) async {
+        return List.generate(15, (i) => i);
+      };
+
+      await tester.pumpApp(
+        InfiniteList(
+          reverse: true,
+          itemLoader: itemLoader,
+          builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
+        ),
+      );
+
+      await tester.pump();
+
+      final listView = tester.widget<ListView>(find.byType(ListView));
+      expect(listView.reverse, isTrue);
+    });
+
+    testWidgets('list view is not reversed by default', (tester) async {
+      final itemLoader = (int limit, {int start}) async {
+        return List.generate(15, (i) => i);
+      };
+
+      await tester.pumpApp(
+        InfiniteList(
+          itemLoader: itemLoader,
+          builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
+        ),
+      );
+
+      await tester.pump();
+
+      final listView = tester.widget<ListView>(find.byType(ListView));
+      expect(listView.reverse, isFalse);
     });
 
     testWidgets('invokes itemLoader immediately', (tester) async {

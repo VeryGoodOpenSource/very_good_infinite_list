@@ -115,12 +115,15 @@ class InfiniteList<T> extends StatefulWidget {
     WidgetBuilder bottomLoader,
     ErrorBuilder errorLoader,
     this.debounceDuration,
+    this.reverse = false,
     this.onError,
+    ScrollController scrollController,
     double scrollOffsetThreshold,
   })  : assert(itemLoader != null),
         assert(builder != null),
         _bottomLoader = bottomLoader,
         _errorLoader = errorLoader,
+        _scrollController = scrollController,
         _scrollOffsetThreshold =
             scrollOffsetThreshold ?? _kScrollOffsetThreshold,
         super(key: key);
@@ -162,9 +165,25 @@ class InfiniteList<T> extends StatefulWidget {
   /// {@macro on_error}
   final OnError onError;
 
+  final ScrollController _scrollController;
+
   /// Debounce duration for the [itemLoader].
   /// Defaults to `const Duration(milliseconds: 100)`.
   final Duration debounceDuration;
+
+  /// Whether the scroll view scrolls in the reading direction.
+  ///
+  /// For example, if the reading direction is left-to-right and
+  /// scroll direction is horizontal, then the scroll view scrolls from
+  /// left to right when [reverse] is false and from right to left when
+  /// [reverse] is true.
+  ///
+  /// Similarly, if scroll direction is vertical, then the scroll view
+  /// scrolls from top to bottom when [reverse] is false and from bottom to top
+  /// when [reverse] is true.
+  ///
+  /// Defaults to false.
+  final bool reverse;
 
   final double _scrollOffsetThreshold;
 
@@ -173,7 +192,7 @@ class InfiniteList<T> extends StatefulWidget {
 }
 
 class _InfiniteListState<T> extends State<InfiniteList<T>> {
-  final _scrollController = ScrollController();
+  ScrollController _scrollController;
   _ListController<T> _controller;
   _Debouncer _debouncer;
 
@@ -193,7 +212,8 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
     super.initState();
     _controller = _ListController<T>(widget.itemLoader);
     _debouncer = _Debouncer(delay: widget.debounceDuration);
-    _scrollController.addListener(_onScroll);
+    _scrollController = widget._scrollController ?? ScrollController()
+      ..addListener(_onScroll);
     _controller
       ..addListener(_onListStateChanged)
       ..fetch();
@@ -205,10 +225,21 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
     _controller
       ..removeListener(_onListStateChanged)
       ..dispose();
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
+    _scrollController.removeListener(_onScroll);
+    if (widget._scrollController == null) {
+      _scrollController.dispose();
+    }
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant InfiniteList<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget._scrollController != oldWidget._scrollController) {
+      _scrollController.removeListener(_onScroll);
+      _scrollController = widget._scrollController ?? ScrollController()
+        ..addListener(_onScroll);
+    }
   }
 
   @override
@@ -243,6 +274,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
         }
 
         return ListView.builder(
+          reverse: widget.reverse,
           controller: _scrollController,
           itemCount: itemCount,
           itemBuilder: (context, index) {
@@ -328,6 +360,7 @@ extension on _ListStatus {
 
 class _ListException implements Exception {
   const _ListException(this.value);
+
   final Object value;
 
   static const none = _ListException(null);

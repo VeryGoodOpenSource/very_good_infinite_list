@@ -23,6 +23,13 @@ class MyApp extends StatelessWidget {
                   trailing: const Icon(Icons.chevron_right),
                 ),
                 ListTile(
+                  title: const Text('Reversed Infinite List'),
+                  onTap: () {
+                    Navigator.of(context).push(_ReversedInfiniteList.route());
+                  },
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                ListTile(
                   title: const Text('Custom Infinite List'),
                   onTap: () {
                     Navigator.of(context).push(_CustomInfiniteList.route());
@@ -52,6 +59,26 @@ class _DefaultInfiniteList extends StatelessWidget {
         builder: InfiniteListBuilder<String>(
           success: (context, item) => ListTile(title: Text(item)),
         ),
+      ),
+    );
+  }
+}
+
+class _ReversedInfiniteList extends StatelessWidget {
+  static Route route() {
+    return MaterialPageRoute(builder: (_) => _ReversedInfiniteList());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Reversed Infinite List')),
+      body: InfiniteList<String>(
+        itemLoader: _itemLoader,
+        builder: InfiniteListBuilder<String>(
+          success: (context, item) => ListTile(title: Text(item)),
+        ),
+        reverse: true,
       ),
     );
   }
