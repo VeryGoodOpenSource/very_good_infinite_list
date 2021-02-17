@@ -225,10 +225,21 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
     _controller
       ..removeListener(_onListStateChanged)
       ..dispose();
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
+    _scrollController.removeListener(_onScroll);
+    if (widget._scrollController == null) {
+      _scrollController.dispose();
+    }
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant InfiniteList<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget._scrollController != oldWidget._scrollController) {
+      _scrollController.removeListener(_onScroll);
+      _scrollController = widget._scrollController ?? ScrollController()
+        ..addListener(_onScroll);
+    }
   }
 
   @override
