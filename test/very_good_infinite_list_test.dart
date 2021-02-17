@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 void main() {
@@ -25,6 +24,61 @@ void main() {
           throwsAssertionError,
         );
       });
+    });
+
+    testWidgets('updates scroll controller when changed', (tester) async {
+      var itemLoaderCallCount = 0;
+      final itemLoader = (int limit, {int start}) async {
+        itemLoaderCallCount++;
+        return List.generate(15, (i) => i);
+      };
+      var scrollController = ScrollController();
+
+      await tester.pumpApp(
+        StatefulBuilder(
+          builder: (context, setState) {
+            return Scaffold(
+              body: InfiniteList<int>(
+                itemLoader: itemLoader,
+                scrollController: scrollController,
+                builder: InfiniteListBuilder(
+                  success: (_, item) {
+                    return ListTile(
+                      key: Key('__item_${item}__'),
+                      title: Text('Item $item'),
+                    );
+                  },
+                ),
+              ),
+              floatingActionButton: FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () {
+                  setState(() {
+                    scrollController = ScrollController();
+                  });
+                },
+              ),
+            );
+          },
+        ),
+      );
+
+      await tester.pump();
+
+      await tester.drag(
+        find.byKey(const Key('__item_9__')),
+        const Offset(0, -500),
+      );
+
+      expect(itemLoaderCallCount, equals(1));
+
+      expect(find.byKey(const Key('__item_9__')), findsOneWidget);
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('__item_0__')), findsOneWidget);
+      expect(find.byKey(const Key('__item_9__')), findsNothing);
+      expect(itemLoaderCallCount, equals(1));
     });
 
     testWidgets('invokes itemLoader immediately', (tester) async {

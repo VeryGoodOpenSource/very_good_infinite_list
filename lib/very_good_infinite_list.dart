@@ -233,6 +233,16 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
   }
 
   @override
+  void didUpdateWidget(covariant InfiniteList<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget._scrollController != oldWidget._scrollController) {
+      _scrollController.removeListener(_onScroll);
+      _scrollController = widget._scrollController ?? ScrollController()
+        ..addListener(_onScroll);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: _controller,
