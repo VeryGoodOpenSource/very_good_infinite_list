@@ -90,6 +90,43 @@ void main() {
       expect(itemLoaderCallCount, equals(1));
     });
 
+    testWidgets('reverse updates list view', (tester) async {
+      final itemLoader = (int limit, {int start}) async {
+        return List.generate(15, (i) => i);
+      };
+
+      await tester.pumpApp(
+        InfiniteList(
+          reverse: true,
+          itemLoader: itemLoader,
+          builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
+        ),
+      );
+
+      await tester.pump();
+
+      final listView = tester.widget<ListView>(find.byType(ListView));
+      expect(listView.reverse, isTrue);
+    });
+
+    testWidgets('list view is not reversed by default', (tester) async {
+      final itemLoader = (int limit, {int start}) async {
+        return List.generate(15, (i) => i);
+      };
+
+      await tester.pumpApp(
+        InfiniteList(
+          itemLoader: itemLoader,
+          builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
+        ),
+      );
+
+      await tester.pump();
+
+      final listView = tester.widget<ListView>(find.byType(ListView));
+      expect(listView.reverse, isFalse);
+    });
+
     testWidgets('invokes itemLoader immediately', (tester) async {
       var itemLoaderCallCount = 0;
       final itemLoader = (int limit, {int start}) {
