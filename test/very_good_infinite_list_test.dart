@@ -32,7 +32,9 @@ void main() {
         itemLoaderCallCount++;
         return List.generate(15, (i) => i);
       };
-      var scrollController = ScrollController();
+      final oldController = ScrollController();
+      final newController = ScrollController();
+      var scrollController = oldController;
 
       await tester.pumpApp(
         StatefulBuilder(
@@ -54,7 +56,7 @@ void main() {
                 child: const Icon(Icons.add),
                 onPressed: () {
                   setState(() {
-                    scrollController = ScrollController();
+                    scrollController = newController;
                   });
                 },
               ),
@@ -65,19 +67,26 @@ void main() {
 
       await tester.pump();
 
-      await tester.drag(
-        find.byKey(const Key('__item_9__')),
-        const Offset(0, -500),
-      );
-
       expect(itemLoaderCallCount, equals(1));
 
-      expect(find.byKey(const Key('__item_9__')), findsOneWidget);
+      await tester.drag(
+        find.byKey(const Key('__item_0__')),
+        const Offset(0, -100),
+      );
+
+      await tester.pump();
+      expect(find.byKey(const Key('__item_0__')), findsNothing);
       await tester.tap(find.byType(FloatingActionButton));
-      await tester.pumpAndSettle();
+
+      await tester.pump();
+
+      expect(oldController.hasClients, isFalse);
+      expect(newController.hasClients, isTrue);
+
+      newController.jumpTo(0);
+      await tester.pump();
 
       expect(find.byKey(const Key('__item_0__')), findsOneWidget);
-      expect(find.byKey(const Key('__item_9__')), findsNothing);
       expect(itemLoaderCallCount, equals(1));
     });
 
