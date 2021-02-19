@@ -117,6 +117,7 @@ class InfiniteList<T> extends StatefulWidget {
     this.debounceDuration,
     this.reverse = false,
     this.onError,
+    this.padding,
     ScrollController scrollController,
     double scrollOffsetThreshold,
   })  : assert(itemLoader != null),
@@ -127,6 +128,9 @@ class InfiniteList<T> extends StatefulWidget {
         _scrollOffsetThreshold =
             scrollOffsetThreshold ?? _kScrollOffsetThreshold,
         super(key: key);
+
+  /// The amount of space by which to inset the children of the [builder].
+  final EdgeInsetsGeometry padding;
 
   /// {@macro infinite_list_builder}
   final InfiniteListBuilder<T> builder;
@@ -274,6 +278,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
         }
 
         return ListView.builder(
+          padding: widget.padding,
           reverse: widget.reverse,
           controller: _scrollController,
           itemCount: itemCount,

@@ -94,6 +94,7 @@ class _CustomInfiniteList extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Custom Infinite List')),
       body: InfiniteList<String>(
+        padding: const EdgeInsets.all(0),
         itemLoader: _itemLoader,
         builder: InfiniteListBuilder<String>(
           empty: (context) => _Empty(),
