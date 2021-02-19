@@ -1,7 +1,11 @@
+## [0.2.1] - 02/19/21
+
+- feat: add `padding` api to `InfiniteList`
+
 ## [0.2.0] - 02/17/21
 
-- feat: add reverse
-- feat: support custom scroll controller
+- feat: add `reverse` api to `InfiniteList`
+- feat: add `ScrollController` to `InfiniteList`
 
 ## [0.1.1] - 02/11/21
 

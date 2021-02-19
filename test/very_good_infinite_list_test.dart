@@ -127,6 +127,25 @@ void main() {
       expect(listView.reverse, isFalse);
     });
 
+    testWidgets('list view supports custom padding', (tester) async {
+      final itemLoader = (int limit, {int start}) async {
+        return List.generate(15, (i) => i);
+      };
+      const padding = EdgeInsets.all(16);
+      await tester.pumpApp(
+        InfiniteList(
+          padding: padding,
+          itemLoader: itemLoader,
+          builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
+        ),
+      );
+
+      await tester.pump();
+
+      final listView = tester.widget<ListView>(find.byType(ListView));
+      expect(listView.padding, equals(padding));
+    });
+
     testWidgets('invokes itemLoader immediately', (tester) async {
       var itemLoaderCallCount = 0;
       final itemLoader = (int limit, {int start}) {
