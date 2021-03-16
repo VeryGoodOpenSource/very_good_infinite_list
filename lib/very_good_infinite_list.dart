@@ -248,7 +248,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<_ListState<T>>(
       valueListenable: _controller,
       builder: (context, state, child) {
         final itemCount = state.hasReachedMax == false
@@ -408,7 +408,7 @@ class _ListController<T> extends ValueNotifier<_ListState<T>> {
 
   final ItemLoader<T> itemLoader;
 
-  void fetch({int limit = 20}) async {
+  Future<void> fetch({int limit = 20}) async {
     if (value.hasReachedMax) return;
 
     if (value.currentIndex == 0 && value.items.isEmpty) {
