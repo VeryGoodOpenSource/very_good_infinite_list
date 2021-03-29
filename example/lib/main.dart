@@ -105,7 +105,7 @@ class _CustomInfiniteList extends StatelessWidget {
           },
         ),
         onError: (context, retry, error) {
-          Scaffold.of(context)
+          ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
               content: Text(error.toString()),
@@ -119,7 +119,7 @@ class _CustomInfiniteList extends StatelessWidget {
   }
 }
 
-Future<List<String>> _itemLoader(int limit, {int start = 0}) async {
+Future<List<String>?> _itemLoader(int limit, {int start = 0}) async {
   await Future<void>.delayed(const Duration(seconds: 1));
   if (start >= 100) return null;
   if (Random().nextInt(2) == 0) throw Exception('Oops!');
@@ -136,9 +136,9 @@ class _Loading extends StatelessWidget {
 
 class _Error extends StatelessWidget {
   const _Error({
-    Key key,
-    this.error,
-    this.retry,
+    Key? key,
+    required this.error,
+    required this.retry,
   }) : super(key: key);
 
   final Object error;
@@ -153,7 +153,7 @@ class _Error extends StatelessWidget {
         children: [
           Text(
             error.toString(),
-            style: theme.textTheme.headline4.copyWith(color: theme.errorColor),
+            style: theme.textTheme.headline4?.copyWith(color: theme.errorColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
@@ -169,7 +169,7 @@ class _Error extends StatelessWidget {
 }
 
 class _ErrorLoader extends StatelessWidget {
-  const _ErrorLoader({Key key, @required this.retry}) : super(key: key);
+  const _ErrorLoader({Key? key, required this.retry}) : super(key: key);
   final VoidCallback retry;
 
   @override
