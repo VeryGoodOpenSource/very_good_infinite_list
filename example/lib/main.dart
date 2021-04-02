@@ -1,192 +1,96 @@
-import 'dart:math';
-
+import 'package:example/people_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+void main() {
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        dividerTheme: const DividerThemeData(
+          indent: 16.0,
+          space: 0.0,
+        ),
+      ),
       home: Scaffold(
-        appBar: AppBar(title: const Text('Infinite List')),
-        body: Builder(
-          builder: (context) {
-            return ListView(
-              children: [
-                ListTile(
-                  title: const Text('Default Infinite List'),
-                  onTap: () {
-                    Navigator.of(context).push(_DefaultInfiniteList.route());
-                  },
-                  trailing: const Icon(Icons.chevron_right),
-                ),
-                ListTile(
-                  title: const Text('Reversed Infinite List'),
-                  onTap: () {
-                    Navigator.of(context).push(_ReversedInfiniteList.route());
-                  },
-                  trailing: const Icon(Icons.chevron_right),
-                ),
-                ListTile(
-                  title: const Text('Custom Infinite List'),
-                  onTap: () {
-                    Navigator.of(context).push(_CustomInfiniteList.route());
-                  },
-                  trailing: const Icon(Icons.chevron_right),
-                ),
-              ],
-            );
-          },
+        appBar: AppBar(title: const Text('Infinite List 2 Example')),
+        body: BlocProvider(
+          create: (_) => PeopleCubit(),
+          child: Example(),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
-class _DefaultInfiniteList extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute(builder: (_) => _DefaultInfiniteList());
-  }
+class Example extends StatefulWidget {
+  @override
+  _ExampleState createState() => _ExampleState();
+}
+
+class _ExampleState extends State<Example> {
+  var _reverse = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Default Infinite List')),
-      body: InfiniteList<String>(
-        itemLoader: _itemLoader,
-        builder: InfiniteListBuilder<String>(
-          success: (context, item) => ListTile(title: Text(item)),
-        ),
-      ),
-    );
-  }
-}
+    final state = context.watch<PeopleCubit>().state;
 
-class _ReversedInfiniteList extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute(builder: (_) => _ReversedInfiniteList());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Reversed Infinite List')),
-      body: InfiniteList<String>(
-        itemLoader: _itemLoader,
-        builder: InfiniteListBuilder<String>(
-          success: (context, item) => ListTile(title: Text(item)),
-        ),
-        reverse: true,
-      ),
-    );
-  }
-}
-
-class _CustomInfiniteList extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute(builder: (_) => _CustomInfiniteList());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Custom Infinite List')),
-      body: InfiniteList<String>(
-        padding: const EdgeInsets.all(0),
-        itemLoader: _itemLoader,
-        builder: InfiniteListBuilder<String>(
-          empty: (context) => _Empty(),
-          loading: (context) => _Loading(),
-          success: (context, item) => ListTile(title: Text(item)),
-          error: (context, retry, error) {
-            return _Error(error: error, retry: retry);
-          },
-        ),
-        onError: (context, retry, error) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-              content: Text(error.toString()),
-              action: SnackBarAction(label: 'Retry', onPressed: retry),
-            ));
-        },
-        bottomLoader: (context) => _Loading(),
-        errorLoader: (context, retry, error) => _ErrorLoader(retry: retry),
-      ),
-    );
-  }
-}
-
-Future<List<String>?> _itemLoader(int limit, {int start = 0}) async {
-  await Future<void>.delayed(const Duration(seconds: 1));
-  if (start >= 100) return null;
-  if (Random().nextInt(2) == 0) throw Exception('Oops!');
-  if (Random().nextInt(5) == 0) throw InfiniteListException();
-  return List.generate(limit, (index) => 'Item ${start + index}');
-}
-
-class _Loading extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: CircularProgressIndicator());
-  }
-}
-
-class _Error extends StatelessWidget {
-  const _Error({
-    Key? key,
-    required this.error,
-    required this.retry,
-  }) : super(key: key);
-
-  final Object error;
-  final VoidCallback retry;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            error.toString(),
-            style: theme.textTheme.headline4?.copyWith(color: theme.errorColor),
-            textAlign: TextAlign.center,
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: Material(
+            color: Colors.white,
+            elevation: 2.0,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 16.0,
+                bottom: 8.0,
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    'A maximum of 24 items can be fetched.',
+                    textAlign: TextAlign.center,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                        onPressed: () => context.read<PeopleCubit>().clear(),
+                        child: const Text('CLEAR STATE'),
+                      ),
+                      const SizedBox(width: 8.0),
+                      TextButton(
+                        onPressed: () => setState(() {
+                          _reverse = !_reverse;
+                        }),
+                        child: const Text('REVERSE'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 16),
-          TextButton.icon(
-            icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
-            onPressed: retry,
+        ),
+        Expanded(
+          child: InfiniteList<Person>(
+            reverse: _reverse,
+            items: state.values,
+            isLoading: state.isLoading,
+            hasError: state.error != null,
+            hasReachedMax: state.hasReachedMax,
+            onFetchData: () => context.read<PeopleCubit>().loadData(),
+            itemBuilder: (context, person) {
+              return ListTile(
+                dense: true,
+                title: Text(person.name),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
-  }
-}
-
-class _ErrorLoader extends StatelessWidget {
-  const _ErrorLoader({Key? key, required this.retry}) : super(key: key);
-  final VoidCallback retry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: TextButton.icon(
-        icon: const Icon(Icons.refresh),
-        label: const Text('Retry'),
-        onPressed: retry,
-      ),
-    );
-  }
-}
-
-class _Empty extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Empty'));
   }
 }

@@ -13,7 +13,7 @@ Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
 ---
 
-A Very Good Infinite List Widget created by [Very Good Ventures][very_good_ventures_link].
+A library for easily displaying paginated data, created by [Very Good Ventures][very_good_ventures_link].
 
 `InfiniteList` comes in handy when building features like activity feeds, news feeds, or anywhere else where you need to lazily fetch and render content for users to consume.
 
