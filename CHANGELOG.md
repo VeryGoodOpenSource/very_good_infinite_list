@@ -1,3 +1,7 @@
+## [0.3.0] - 04/05/21
+
+- nnbd migration
+
 ## [0.2.1] - 02/19/21
 
 - feat: add `padding` api to `InfiniteList`

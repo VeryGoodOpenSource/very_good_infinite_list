@@ -33,7 +33,7 @@ import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 void main() => runApp(MyApp());
 
-Future<List<String>> _itemLoader(int limit, {int start = 0}) {
+Future<List<String>?> _itemLoader(int limit, {int start = 0}) {
   return Future.delayed(
     const Duration(seconds: 1),
     () => List.generate(limit, (index) => 'Item ${start + index}'),
