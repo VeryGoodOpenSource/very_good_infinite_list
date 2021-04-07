@@ -1,11 +1,7 @@
+// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:mockito/mockito.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
-
-class MockScrollPosition extends Mock implements ScrollPosition {}
-
-class MockScrollController extends Mock implements ScrollController {}
 
 extension on WidgetTester {
   Future<void> pumpApp(Widget widget) async {
@@ -24,138 +20,13 @@ extension on WidgetTester {
 void main() {
   group('InfiniteList', () {
     void emptyCallback() {}
-    Widget emptyBuilder(BuildContext _, int __) => const SizedBox();
-
-    ScrollPosition scrollPosition;
-    ScrollController scrollController;
-
-    setUp(() {
-      scrollPosition = MockScrollPosition();
-      when(scrollPosition.maxScrollExtent).thenReturn(1000.0);
-
-      scrollController = MockScrollController();
-      when(scrollController.hasClients).thenReturn(true);
-      when(scrollController.offset).thenReturn(0.0);
-      when(scrollController.position).thenReturn(scrollPosition);
-    });
-
-    test('throws AssertionError when items is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: null,
-          hasReachedMax: false,
-          onFetchData: emptyCallback,
-          itemBuilder: emptyBuilder,
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when hasReachedMax is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: [],
-          hasReachedMax: null,
-          onFetchData: emptyCallback,
-          itemBuilder: emptyBuilder,
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when onFetchData is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: [],
-          hasReachedMax: false,
-          onFetchData: null,
-          itemBuilder: emptyBuilder,
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when itemBuilder is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: [],
-          hasReachedMax: false,
-          onFetchData: emptyCallback,
-          itemBuilder: null,
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when scrollExtentThreshold is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: [],
-          hasReachedMax: false,
-          onFetchData: emptyCallback,
-          itemBuilder: emptyBuilder,
-          scrollExtentThreshold: null,
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when debounceDuration is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: [],
-          hasReachedMax: false,
-          onFetchData: emptyCallback,
-          itemBuilder: emptyBuilder,
-          debounceDuration: null,
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when reverse is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: [],
-          hasReachedMax: false,
-          onFetchData: emptyCallback,
-          itemBuilder: emptyBuilder,
-          reverse: null,
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when isLoading is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: [],
-          hasReachedMax: false,
-          onFetchData: emptyCallback,
-          itemBuilder: emptyBuilder,
-          isLoading: null,
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws AssertionError when hasError is null', () {
-      expect(
-        () => InfiniteList<int>(
-          items: [],
-          hasReachedMax: false,
-          onFetchData: emptyCallback,
-          itemBuilder: emptyBuilder,
-          hasError: null,
-        ),
-        throwsAssertionError,
-      );
-    });
 
     testWidgets(
       'disposes old scrollController when it is replaced',
       (tester) async {
         const key = Key('__test_target__');
+
+        final scrollController = ScrollController();
 
         Future<void> rebuild() async {
           await tester.tap(find.byKey(key));
@@ -176,6 +47,7 @@ void main() {
                   ),
                   Expanded(
                     child: InfiniteList<int>(
+                      key: const Key('__infinite_list__'),
                       scrollController: !useExternalScrollController
                           ? null
                           : scrollController,
@@ -194,8 +66,10 @@ void main() {
         useExternalScrollController = false;
         await rebuild();
 
-        verify(scrollController.removeListener(any)).called(1);
-        verify(scrollController.dispose()).called(1);
+        expect(
+          () => scrollController.hasListeners,
+          throwsFlutterError,
+        );
       },
     );
 
@@ -203,9 +77,6 @@ void main() {
       'attempts to fetch new elements if rebuild occurs '
       'with different set of items',
       (tester) async {
-        when(scrollPosition.maxScrollExtent).thenReturn(0.0);
-        when(scrollController.offset).thenReturn(0.0);
-
         const key = Key('__test_target__');
 
         Future<void> rebuild() async {

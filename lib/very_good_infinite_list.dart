@@ -22,32 +22,23 @@ typedef ItemBuilder<T> = Widget Function(BuildContext context, T item);
 class InfiniteList<T> extends StatefulWidget {
   /// {@macro infinite_list}
   const InfiniteList({
-    Key key,
+    Key? key,
     this.scrollController,
     this.scrollExtentThreshold = 400.0,
     this.debounceDuration = const Duration(milliseconds: 100),
     this.reverse = false,
-    @required this.items,
+    required this.items,
     this.isLoading = false,
     this.hasError = false,
-    @required this.hasReachedMax,
-    @required this.onFetchData,
+    required this.hasReachedMax,
+    required this.onFetchData,
     this.padding,
     this.emptyBuilder,
     this.loadingBuilder,
     this.errorBuilder,
     this.separatorBuilder,
-    @required this.itemBuilder,
-  })  : assert(scrollExtentThreshold != null),
-        assert(scrollExtentThreshold >= 0.0),
-        assert(debounceDuration != null),
-        assert(reverse != null),
-        assert(items != null),
-        assert(isLoading != null),
-        assert(hasError != null),
-        assert(hasReachedMax != null),
-        assert(onFetchData != null),
-        assert(itemBuilder != null),
+    required this.itemBuilder,
+  })   : assert(scrollExtentThreshold >= 0.0),
         super(key: key);
 
   /// An optional [ScrollController] this [InfiniteList] will attach to.
@@ -56,7 +47,7 @@ class InfiniteList<T> extends StatefulWidget {
   ///
   /// Is optional and mostly used only for testing. If set to `null`, an
   /// internal [ScrollController] is used instead.
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   /// The offset, in pixels, that the [scrollController] must be scrolled over
   /// to trigger [onFetchData].
@@ -128,24 +119,24 @@ class InfiniteList<T> extends StatefulWidget {
   /// The amount of space by which to inset the list of items.
   ///
   /// Is optional and can be `null`.
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   /// An optional builder that's shown when the list of [items] is empty.
   ///
   /// If `null`, nothing is shown.
-  final WidgetBuilder emptyBuilder;
+  final WidgetBuilder? emptyBuilder;
 
   /// An optional builder that's shown at the end of the list when [isLoading]
   /// is `true`.
   ///
   /// If `null`, a default builder is used that renders a centered
   /// [CircularProgressIndicator].
-  final WidgetBuilder loadingBuilder;
+  final WidgetBuilder? loadingBuilder;
 
   /// An optional builder that's shown when [hasError] is not `null`.
   ///
   /// If `null`, a default builder is used that renders the text `"Error"`.
-  final WidgetBuilder errorBuilder;
+  final WidgetBuilder? errorBuilder;
 
   /// An optional builder that, when provided, is used to show a widget in
   /// between every pair of items.
@@ -154,7 +145,7 @@ class InfiniteList<T> extends StatefulWidget {
   /// a [Divider] between every tile.
   ///
   /// Is optional and can be `null`.
-  final WidgetBuilder separatorBuilder;
+  final WidgetBuilder? separatorBuilder;
 
   /// The builder used to build every element of [items].
   ///
@@ -166,21 +157,22 @@ class InfiniteList<T> extends StatefulWidget {
 }
 
 class _InfiniteListState<T> extends State<InfiniteList<T>> {
-  _Debouncer _debounce;
-  ScrollController _scrollController;
+  late final _Debouncer _debounce;
+
+  ScrollController? _scrollController;
 
   @override
   void initState() {
     super.initState();
     _debounce = _Debouncer(widget.debounceDuration);
     _initScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       _attemptFetch();
     });
   }
 
   @override
-  void didUpdateWidget(InfiniteList oldWidget) {
+  void didUpdateWidget(InfiniteList<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (widget.scrollController != oldWidget.scrollController) {
@@ -188,7 +180,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
     }
 
     if (!listEquals(widget.items, oldWidget.items)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
         _attemptFetch();
       });
     }
@@ -196,7 +188,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
 
   @override
   void dispose() {
-    _debounce?.dispose();
+    _debounce.dispose();
     super.dispose();
   }
 
@@ -222,12 +214,12 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
       return true;
     }
 
-    if (!_scrollController.hasClients) {
+    if (!_scrollController!.hasClients) {
       return false;
     }
 
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
+    final maxScroll = _scrollController!.position.maxScrollExtent;
+    final currentScroll = _scrollController!.offset;
     return currentScroll >= (maxScroll - widget.scrollExtentThreshold);
   }
 
@@ -257,11 +249,11 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
         if (!widget.isLoading &&
             widget.items.isEmpty &&
             widget.emptyBuilder != null)
-          widget.emptyBuilder(context)
+          widget.emptyBuilder!(context)
         else
           for (var i = 0; i < widget.items.length; i++) ...[
             if (i != 0 && widget.separatorBuilder != null)
-              widget.separatorBuilder(context),
+              widget.separatorBuilder!(context),
             widget.itemBuilder(context, widget.items[i]),
           ],
         if (widget.hasError)
