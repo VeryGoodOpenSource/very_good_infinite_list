@@ -1,4 +1,4 @@
-## [1.0.0] - 04/02/21
+## [0.4.0] - 04/07/21
 
 - BREAKING: refactor: remodel api to work declaratively
 
