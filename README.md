@@ -38,24 +38,40 @@ import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 void main() => runApp(MyApp());
 
-Future<List<String>?> _itemLoader(int limit, {int start = 0}) {
-  return Future.delayed(
-    const Duration(seconds: 1),
-    () => List.generate(limit, (index) => 'Item ${start + index}'),
-  );
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
+class _MyAppState extends State<MyApp> {
+  var _items = <String>[];
+  var _isLoading = false;
+
+  void _fetchData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    setState(() {
+      _isLoading = false;
+      _items = List.generate(_items.length + 10, (i) => 'Item $i');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Infinite List')),
+        appBar: AppBar(title: const Text('Infinite List')),
         body: InfiniteList<String>(
-          itemLoader: _itemLoader,
-          builder: InfiniteListBuilder<String>(
-            success: (context, item) => ListTile(title: Text(item)),
-          ),
+          items: _items,
+          hasReachedMax: false,
+          isLoading: _isLoading,
+          onFetchData: _fetchData,
+          separatorBuilder: (context) => const Divider(),
+          itemBuilder: (context, item) => ListTile(title: Text(item)),
         ),
       ),
     );
@@ -71,55 +87,90 @@ class MyApp extends StatelessWidget {
 
 ```dart
 InfiniteList<String>(
-  itemLoader: _itemLoader,
-  builder: InfiniteListBuilder<String>(...),
-  bottomLoader: (context) {
-    // Return a custom widget which will be rendered at the bottom of the list
-    // while more content is being loaded.
-  },
-  errorLoader: (context, retry, error) {
-    // Return a custom widget which will be rendered when `itemLoader`
-    // throws a generic `Exception` and there is prior content loaded.
-    // `retry` can be invoked to attempt to reload the content.
-  },
-  // How long to wait between attempts to load items.
-  // Defaults to 100ms.
-  debounceDuration: Duration.zero,
-  // What percentage of the screen should be scrolled before
-  // attempting to load additional items.
-  // Defaults to 0.7 (70% from the top).
-  scrollOffsetThreshold: 0.5,
-);
-```
+  items: ['Al', 'Felix', 'Jay'],
+  hasReachedMax: false,
+  onFetchData: () => _fetchData(),
+  itemBuilder: (context, item) => ListTile(title: Text(item)),
 
-#### InfiniteListBuilder
+  // An optional [ScrollController] this [InfiniteList] will attach to.
+  // It's used to detect when the list has scrolled to the appropriate position
+  // to call [onFetchData].
+  //
+  // Is optional and mostly used only for testing. If set to `null`, an
+  // internal [ScrollController] is used instead.
+  scrollController: _scrollController,
 
-`InfiniteListBuilder` has multiple optional parameters which allow you to render different widgets in response to various states that the `InfiniteList` can be in.
+  // Indicates if new items are currently being loaded.
+  //
+  // While set to `true`, the [onFetchData] callback will not be triggered
+  // and the [loadingBuilder] will be rendered.
+  //
+  // Is set to `false` by default and cannot be `null`.
+  isLoading: false,
 
-```dart
-InfiniteList<String>(
-  itemLoader: _itemLoader,
-  builder: InfiniteListBuilder<String>(
-    empty: (context) {
-      // Return a custom widget when `itemLoader` returns an empty list
-      // and there is no prior content.
-    },
-    loading: (context) {
-      // Return a custom widget when `itemLoader` is in the process of
-      // fetching results and there is no prior content
-    },
-    success: (context, item) {
-      // Return a custom widget when `itemLoader` has returned content.
-      // Here item refers to a specific result.
-      // This builder will be called multiple times as different results
-      // come into view.
-    },
-    error: (context, retry, error) {
-      // Return a custom widget when `itemLoader` throws an `InfiniteListException`.
-      // `error` will also be called when `itemLoader` throws any `Exception`
-      // if there is no prior content.
-    },
-  ),
+  // Indicates if an error has occurred.
+  //
+  // While set to `true`, the [onFetchData] callback will not be triggered
+  // and the [errorBuilder] will be rendered.
+  //
+  // Is set to `false` by default and cannot be `null`.
+  hasError: false,
+
+  // Indicates if the list should be reversed.
+  //
+  // If set to `true`, the list of items, [loadingBuilder] and [errorBuilder]
+  // will be rendered from bottom to top.
+  reverse: false,
+
+  // The duration with which calls to [onFetchData] will be debounced.
+  //
+  // Is set to a duration of 100 milliseconds by default and cannot be `null`.
+  debounceDuration: const Duration(milliseconds: 100),
+
+  // The offset, in pixels, that the [scrollController] must be scrolled over
+  // to trigger [onFetchData].
+  //
+  // This is useful for fetching data _before_ the user has scrolled all the
+  // way to the end of the list, so the fetching mechanism is more well hidden.
+  //
+  // For example, if this is set to `400.0` (the default), [onFetchData] will
+  // be called when the list is scrolled `400.0` pixels away from the bottom
+  // (or the top if [reverse] is `true`).
+  //
+  // This value must be `0.0` or greater, is set to `400.0` by default and
+  // cannot be `null`.
+  scrollExtentThreshold: 400.0,
+
+  // The amount of space by which to inset the list of items.
+  //
+  // Is optional and can be `null`.
+  padding: const EdgeInsets.all(16.0),
+
+  // An optional builder that's shown when the list of [items] is empty.
+  //
+  // If `null`, nothing is shown.
+  emptyBuilder: () => const Center(child: Text('No items.')),
+
+  // An optional builder that's shown at the end of the list when [isLoading]
+  // is `true`.
+  //
+  // If `null`, a default builder is used that renders a centered
+  // [CircularProgressIndicator].
+  loadingBuilder: () => const Center(child: CircularProgressIndicator()),
+
+  // An optional builder that's shown when [hasError] is not `null`.
+  //
+  // If `null`, a default builder is used that renders the text `"Error"`.
+  errorBuilder: () => const Center(child: Text('Error')),
+
+  // An optional builder that, when provided, is used to show a widget in
+  // between every pair of items.
+  //
+  // If the [itemBuilder] returns a [ListTile], this is commonly used to render
+  // a [Divider] between every tile.
+  //
+  // Is optional and can be `null`.
+  separatorBuilder: () => const Divider(),
 );
 ```
 
