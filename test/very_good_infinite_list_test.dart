@@ -157,6 +157,11 @@ void main() {
       (tester) async {
         const key = Key('__test_target__');
 
+        Future<void> rebuild() async {
+          await tester.tap(find.byKey(key));
+          await tester.pumpAndSettle();
+        }
+
         var useExternalScrollController = true;
 
         await tester.pumpApp(
@@ -166,12 +171,8 @@ void main() {
                 children: [
                   TextButton(
                     key: key,
-                    onPressed: () {
-                      setState(() {
-                        useExternalScrollController = false;
-                      });
-                    },
-                    child: const Text('REPLACE CONTROLLER'),
+                    onPressed: () => setState(() {}),
+                    child: const Text('REBUILD'),
                   ),
                   Expanded(
                     child: InfiniteList<int>(
@@ -190,11 +191,62 @@ void main() {
           ),
         );
 
-        await tester.tap(find.byKey(key));
-        await tester.pumpAndSettle();
+        useExternalScrollController = false;
+        await rebuild();
 
         verify(scrollController.removeListener(any)).called(1);
         verify(scrollController.dispose()).called(1);
+      },
+    );
+
+    testWidgets(
+      'attempts to fetch new elements if rebuild occurs '
+      'with different set of items',
+      (tester) async {
+        when(scrollPosition.maxScrollExtent).thenReturn(0.0);
+        when(scrollController.offset).thenReturn(0.0);
+
+        const key = Key('__test_target__');
+
+        Future<void> rebuild() async {
+          await tester.tap(find.byKey(key));
+          await tester.pumpAndSettle();
+        }
+
+        var items = [1, 2, 3];
+        var hasReachedMax = true;
+
+        var onFetchDataCalls = 0;
+
+        await tester.pumpApp(
+          StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                children: [
+                  TextButton(
+                    key: key,
+                    onPressed: () => setState(() {}),
+                    child: const Text('REBUILD'),
+                  ),
+                  Expanded(
+                    child: InfiniteList<int>(
+                      items: items,
+                      hasReachedMax: hasReachedMax,
+                      onFetchData: () => onFetchDataCalls++,
+                      itemBuilder: (_, i) => Text('$i'),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+
+        items = [1, 2, 3, 4, 5];
+        hasReachedMax = false;
+        await rebuild();
+
+        expect(onFetchDataCalls, equals(1));
       },
     );
 
@@ -238,6 +290,29 @@ void main() {
         expect(find.byKey(const Key('__test_target_1__')), findsOneWidget);
         expect(find.byKey(const Key('__test_target_2__')), findsOneWidget);
         expect(find.byKey(const Key('__test_target_3__')), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'renders separators in between items using separatorBuilder',
+      (tester) async {
+        var separatorBuilderCalls = 0;
+
+        await tester.pumpApp(
+          InfiniteList<int>(
+            items: [1, 2, 3],
+            hasReachedMax: false,
+            onFetchData: emptyCallback,
+            separatorBuilder: (_) {
+              separatorBuilderCalls++;
+              return const Divider();
+            },
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        expect(separatorBuilderCalls, equals(2));
+        expect(find.byType(Divider), findsNWidgets(2));
       },
     );
 
