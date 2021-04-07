@@ -24,7 +24,7 @@ class InfiniteList<T> extends StatefulWidget {
   const InfiniteList({
     Key key,
     this.scrollController,
-    this.scrollOffsetThreshold = 0.7,
+    this.scrollExtentThreshold = 400.0,
     this.debounceDuration = const Duration(milliseconds: 100),
     this.reverse = false,
     @required this.items,
@@ -38,8 +38,8 @@ class InfiniteList<T> extends StatefulWidget {
     this.errorBuilder,
     this.separatorBuilder,
     @required this.itemBuilder,
-  })  : assert(scrollOffsetThreshold != null),
-        assert(scrollOffsetThreshold >= 0.0 && scrollOffsetThreshold <= 1.0),
+  })  : assert(scrollExtentThreshold != null),
+        assert(scrollExtentThreshold >= 0.0),
         assert(debounceDuration != null),
         assert(reverse != null),
         assert(items != null),
@@ -58,12 +58,19 @@ class InfiniteList<T> extends StatefulWidget {
   /// internal [ScrollController] is used instead.
   final ScrollController scrollController;
 
-  /// The fractional offset that the [scrollController] must be scrolled over
-  /// to trigger [onFetchData] to be called.
+  /// The offset, in pixels, that the [scrollController] must be scrolled over
+  /// to trigger [onFetchData].
   ///
-  /// This value must be between `0.0` and `1.0` (inclusive), is set to `0.7`
-  /// by default and cannot be `null`.
-  final double scrollOffsetThreshold;
+  /// This is useful for fetching data _before_ the user has scrolled all the
+  /// way to the end of the list, so the fetching mechanism is more well hidden.
+  ///
+  /// For example, if this is set to `400.0` (the default), [onFetchData] will
+  /// be called when the list is scrolled `400.0` pixels away from the bottom
+  /// (or the top if [reverse] is `true`).
+  ///
+  /// This value must be `0.0` or greater, is set to `400.0` by default and
+  /// cannot be `null`.
+  final double scrollExtentThreshold;
 
   /// The duration with which calls to [onFetchData] will be debounced.
   ///
@@ -111,7 +118,7 @@ class InfiniteList<T> extends StatefulWidget {
   /// In normal operation, this method should trigger new data to be fetched and
   /// [isLoading] to be set to `true`.
   ///
-  /// Exactly when this is called depends on the [scrollOffsetThreshold].
+  /// Exactly when this is called depends on the [scrollExtentThreshold].
   /// Additionally, every call to this will be debounced by the provided
   /// [debounceDuration].
   ///
@@ -167,7 +174,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
     super.initState();
     _debounce = _Debouncer(widget.debounceDuration);
     _initScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _attemptFetch();
     });
   }
@@ -181,7 +188,9 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
     }
 
     if (!listEquals(widget.items, oldWidget.items)) {
-      _attemptFetch();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _attemptFetch();
+      });
     }
   }
 
@@ -219,7 +228,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
 
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * widget.scrollOffsetThreshold);
+    return currentScroll >= (maxScroll - widget.scrollExtentThreshold);
   }
 
   WidgetBuilder get _loadingBuilder =>
@@ -245,9 +254,11 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
       reverse: widget.reverse,
       padding: widget.padding,
       children: [
-        if (widget.items.isEmpty) ...[
-          if (widget.emptyBuilder != null) widget.emptyBuilder(context),
-        ] else
+        if (!widget.isLoading &&
+            widget.items.isEmpty &&
+            widget.emptyBuilder != null)
+          widget.emptyBuilder(context)
+        else
           for (var i = 0; i < widget.items.length; i++) ...[
             if (i != 0 && widget.separatorBuilder != null)
               widget.separatorBuilder(context),

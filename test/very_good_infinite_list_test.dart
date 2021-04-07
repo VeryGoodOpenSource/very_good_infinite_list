@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mockito/mockito.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
+class MockScrollPosition extends Mock implements ScrollPosition {}
+
 class MockScrollController extends Mock implements ScrollController {}
 
 extension on WidgetTester {
@@ -24,10 +26,17 @@ void main() {
     void emptyCallback() {}
     Widget emptyBuilder(BuildContext _, int __) => const SizedBox();
 
+    ScrollPosition scrollPosition;
     ScrollController scrollController;
 
     setUp(() {
+      scrollPosition = MockScrollPosition();
+      when(scrollPosition.maxScrollExtent).thenReturn(1000.0);
+
       scrollController = MockScrollController();
+      when(scrollController.hasClients).thenReturn(true);
+      when(scrollController.offset).thenReturn(0.0);
+      when(scrollController.position).thenReturn(scrollPosition);
     });
 
     test('throws AssertionError when items is null', () {
@@ -77,6 +86,117 @@ void main() {
         throwsAssertionError,
       );
     });
+
+    test('throws AssertionError when scrollExtentThreshold is null', () {
+      expect(
+        () => InfiniteList<int>(
+          items: [],
+          hasReachedMax: false,
+          onFetchData: emptyCallback,
+          itemBuilder: emptyBuilder,
+          scrollExtentThreshold: null,
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('throws AssertionError when debounceDuration is null', () {
+      expect(
+        () => InfiniteList<int>(
+          items: [],
+          hasReachedMax: false,
+          onFetchData: emptyCallback,
+          itemBuilder: emptyBuilder,
+          debounceDuration: null,
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('throws AssertionError when reverse is null', () {
+      expect(
+        () => InfiniteList<int>(
+          items: [],
+          hasReachedMax: false,
+          onFetchData: emptyCallback,
+          itemBuilder: emptyBuilder,
+          reverse: null,
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('throws AssertionError when isLoading is null', () {
+      expect(
+        () => InfiniteList<int>(
+          items: [],
+          hasReachedMax: false,
+          onFetchData: emptyCallback,
+          itemBuilder: emptyBuilder,
+          isLoading: null,
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('throws AssertionError when hasError is null', () {
+      expect(
+        () => InfiniteList<int>(
+          items: [],
+          hasReachedMax: false,
+          onFetchData: emptyCallback,
+          itemBuilder: emptyBuilder,
+          hasError: null,
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    testWidgets(
+      'disposes old scrollController when it is replaced',
+      (tester) async {
+        const key = Key('__test_target__');
+
+        var useExternalScrollController = true;
+
+        await tester.pumpApp(
+          StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                children: [
+                  TextButton(
+                    key: key,
+                    onPressed: () {
+                      setState(() {
+                        useExternalScrollController = false;
+                      });
+                    },
+                    child: const Text('REPLACE CONTROLLER'),
+                  ),
+                  Expanded(
+                    child: InfiniteList<int>(
+                      scrollController: !useExternalScrollController
+                          ? null
+                          : scrollController,
+                      items: List.generate(1000, (i) => i),
+                      hasReachedMax: false,
+                      onFetchData: emptyCallback,
+                      itemBuilder: (_, i) => Text('$i'),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+
+        await tester.tap(find.byKey(key));
+        await tester.pumpAndSettle();
+
+        verify(scrollController.removeListener(any)).called(1);
+        verify(scrollController.dispose()).called(1);
+      },
+    );
 
     testWidgets(
       'renders ListView',
@@ -155,6 +275,45 @@ void main() {
               hasReachedMax: false,
               onFetchData: emptyCallback,
               emptyBuilder: (_) => const Text('__EMPTY__', key: key),
+              itemBuilder: (_, i) => Text('$i'),
+            ),
+          );
+
+          expect(find.byKey(key), findsOneWidget);
+        },
+      );
+    });
+
+    group('with hasError set to true', () {
+      testWidgets(
+        'renders default errorBuilder',
+        (tester) async {
+          await tester.pumpApp(
+            InfiniteList<int>(
+              hasError: true,
+              items: [],
+              hasReachedMax: false,
+              onFetchData: emptyCallback,
+              itemBuilder: (_, i) => Text('$i'),
+            ),
+          );
+
+          expect(find.text('Error'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'renders custom errorBuilder',
+        (tester) async {
+          const key = Key('__test_target__');
+
+          await tester.pumpApp(
+            InfiniteList<int>(
+              hasError: true,
+              items: [],
+              hasReachedMax: false,
+              onFetchData: emptyCallback,
+              errorBuilder: (_) => const Text('__ERROR__', key: key),
               itemBuilder: (_, i) => Text('$i'),
             ),
           );
