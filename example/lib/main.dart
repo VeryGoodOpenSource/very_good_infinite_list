@@ -1,7 +1,6 @@
-import 'package:example/people_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:example/advanced/advanced_example.dart';
+import 'package:example/simple/simple_example.dart';
 import 'package:flutter/material.dart';
-import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 void main() {
   runApp(
@@ -12,85 +11,43 @@ void main() {
           space: 0.0,
         ),
       ),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Infinite List 2 Example')),
-        body: BlocProvider(
-          create: (_) => PeopleCubit(),
-          child: Example(),
-        ),
-      ),
+      home: Example(),
     ),
   );
 }
 
-class Example extends StatefulWidget {
-  @override
-  _ExampleState createState() => _ExampleState();
-}
-
-class _ExampleState extends State<Example> {
-  var _reverse = false;
-
+class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<PeopleCubit>().state;
-
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: Material(
-            color: Colors.white,
-            elevation: 2.0,
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 16.0,
-                bottom: 8.0,
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'A maximum of 24 items can be fetched.',
-                    textAlign: TextAlign.center,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextButton(
-                        onPressed: () => context.read<PeopleCubit>().clear(),
-                        child: const Text('CLEAR STATE'),
-                      ),
-                      const SizedBox(width: 8.0),
-                      TextButton(
-                        onPressed: () => setState(() {
-                          _reverse = !_reverse;
-                        }),
-                        child: const Text('REVERSE'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Infinite List'),
+      ),
+      body: ListView(
+        children: [
+          ListTile(
+            isThreeLine: true,
+            onTap: () => Navigator.of(context).push(SimpleExample.route()),
+            title: const Text('Simple Example'),
+            subtitle: const Text(
+              'A simple example that uses an Infinite List '
+              'in a StatefulWidget.',
             ),
+            trailing: const Icon(Icons.chevron_right),
           ),
-        ),
-        Expanded(
-          child: InfiniteList<Person>(
-            reverse: _reverse,
-            items: state.values,
-            isLoading: state.isLoading,
-            hasError: state.error != null,
-            hasReachedMax: state.hasReachedMax,
-            onFetchData: () => context.read<PeopleCubit>().loadData(),
-            itemBuilder: (context, person) {
-              return ListTile(
-                dense: true,
-                title: Text(person.name),
-              );
-            },
+          const Divider(),
+          ListTile(
+            isThreeLine: true,
+            onTap: () => Navigator.of(context).push(AdvancedExample.route()),
+            title: const Text('Advanced Example'),
+            subtitle: const Text(
+              'An advanced example that uses an Infinite List '
+              'in combination with a Cubit from the Bloc package.',
+            ),
+            trailing: const Icon(Icons.chevron_right),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

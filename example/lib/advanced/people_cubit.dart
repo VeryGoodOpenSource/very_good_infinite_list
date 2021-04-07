@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -23,7 +22,7 @@ class PeopleCubit extends Cubit<PeopleState> {
     ));
     await Future.delayed(const Duration(milliseconds: 500));
 
-    if (state.values.length >= 15) {
+    if (state.values.length >= 24) {
       emit(PeopleState(
         values: state.values,
         isLoading: false,
