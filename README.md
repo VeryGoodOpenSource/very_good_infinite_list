@@ -23,10 +23,14 @@ A library for easily displaying paginated data, created by [Very Good Ventures][
 
 ## Usage
 
-A basic `InfiniteList` requires two parameters:
+A basic `InfiniteList` requires four parameters:
 
-- `itemLoader` which is responsible for asynchronously fetching the content
-- `builder` which is responsible for returning a `Widget` given a specific item (result)
+- A list of `items` that are displayed using the `itemBuilder`.
+- An `itemBuilder` that is responsible for returning a widget for every element in `items`.
+- `hasReachedMax` that indicates if any more data is available.
+- An `onFetchData` callback that's triggered whenever new data should be fetched.
+
+## Example
 
 ```dart
 import 'package:flutter/material.dart';

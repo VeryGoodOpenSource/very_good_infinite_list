@@ -52,12 +52,12 @@ class PeopleState extends Equatable {
 
   final List<Person> values;
   final bool isLoading;
-  final Object error;
+  final Object? error;
   final bool hasReachedMax;
 
   @override
   bool get stringify => true;
 
   @override
-  List<Object> get props => [values, isLoading, error, hasReachedMax];
+  List<Object?> get props => [values, isLoading, error, hasReachedMax];
 }
