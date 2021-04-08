@@ -188,6 +188,8 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
 
   @override
   void dispose() {
+    _scrollController?.removeListener(_attemptFetch);
+    _scrollController?.dispose();
     _debounce.dispose();
     super.dispose();
   }
