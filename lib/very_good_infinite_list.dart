@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// The type definition for the [InfiniteList.itemBuilder].
-typedef ItemBuilder<T> = Widget Function(BuildContext context, T item);
+typedef ItemBuilder = Widget Function(BuildContext context, int index);
 
 /// {@macro infinite_list}
 /// A widget that makes it easy to declaratively load and display paginated data
@@ -16,10 +16,10 @@ typedef ItemBuilder<T> = Widget Function(BuildContext context, T item);
 /// When there are too few items to fill the widget's allocated space,
 /// [onFetchData] will be called automatically.
 ///
-/// The [items], [hasReachedMax], [onFetchData] and [itemBuilder] must be
+/// The [itemCount], [hasReachedMax], [onFetchData] and [itemBuilder] must be
 /// provided and cannot be `null`.
 /// {@endtemplate}
-class InfiniteList<T> extends StatefulWidget {
+class InfiniteList extends StatefulWidget {
   /// {@macro infinite_list}
   const InfiniteList({
     Key? key,
@@ -27,7 +27,7 @@ class InfiniteList<T> extends StatefulWidget {
     this.scrollExtentThreshold = 400.0,
     this.debounceDuration = const Duration(milliseconds: 100),
     this.reverse = false,
-    required this.items,
+    required this.itemCount,
     this.isLoading = false,
     this.hasError = false,
     required this.hasReachedMax,
@@ -74,10 +74,10 @@ class InfiniteList<T> extends StatefulWidget {
   /// will be rendered from bottom to top.
   final bool reverse;
 
-  /// The list of items that need to be rendered by the [itemBuilder].
+  /// The amount of items that need to be rendered by the [itemBuilder].
   ///
   /// Is required and cannot be `null`.
-  final List<T> items;
+  final int itemCount;
 
   /// Indicates if new items are currently being loaded.
   ///
@@ -121,7 +121,7 @@ class InfiniteList<T> extends StatefulWidget {
   /// Is optional and can be `null`.
   final EdgeInsets? padding;
 
-  /// An optional builder that's shown when the list of [items] is empty.
+  /// An optional builder that's shown when the list of items is empty.
   ///
   /// If `null`, nothing is shown.
   final WidgetBuilder? emptyBuilder;
@@ -147,16 +147,16 @@ class InfiniteList<T> extends StatefulWidget {
   /// Is optional and can be `null`.
   final WidgetBuilder? separatorBuilder;
 
-  /// The builder used to build every element of [items].
+  /// The builder used to build a widget for every index of the `itemCount`.
   ///
   /// Is required and cannot be `null`.
-  final ItemBuilder<T> itemBuilder;
+  final ItemBuilder itemBuilder;
 
   @override
-  _InfiniteListState<T> createState() => _InfiniteListState<T>();
+  _InfiniteListState createState() => _InfiniteListState();
 }
 
-class _InfiniteListState<T> extends State<InfiniteList<T>> {
+class _InfiniteListState extends State<InfiniteList> {
   late final _Debouncer _debounce;
 
   ScrollController? _scrollController;
@@ -172,14 +172,14 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
   }
 
   @override
-  void didUpdateWidget(InfiniteList<T> oldWidget) {
+  void didUpdateWidget(InfiniteList oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (widget.scrollController != oldWidget.scrollController) {
       _initScrollController();
     }
 
-    if (!listEquals(widget.items, oldWidget.items)) {
+    if (widget.itemCount != oldWidget.itemCount) {
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         _attemptFetch();
       });
@@ -212,7 +212,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
   }
 
   bool get _isAtEnd {
-    if (widget.items.isEmpty) {
+    if (widget.itemCount == 0) {
       return true;
     }
 
@@ -249,14 +249,14 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
       padding: widget.padding,
       children: [
         if (!widget.isLoading &&
-            widget.items.isEmpty &&
+            widget.itemCount == 0 &&
             widget.emptyBuilder != null)
           widget.emptyBuilder!(context)
         else
-          for (var i = 0; i < widget.items.length; i++) ...[
+          for (var i = 0; i < widget.itemCount; i++) ...[
             if (i != 0 && widget.separatorBuilder != null)
               widget.separatorBuilder!(context),
-            widget.itemBuilder(context, widget.items[i]),
+            widget.itemBuilder(context, i),
           ],
         if (widget.hasError)
           _errorBuilder(context)

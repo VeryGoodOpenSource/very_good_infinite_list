@@ -41,16 +41,16 @@ class _SimpleExampleState extends State<SimpleExample> {
       appBar: AppBar(
         title: const Text('Simple Example'),
       ),
-      body: InfiniteList<String>(
-        items: _items,
+      body: InfiniteList(
+        itemCount: _items.length,
         hasReachedMax: false,
         isLoading: _isLoading,
         onFetchData: _fetchData,
         separatorBuilder: (context) => const Divider(),
-        itemBuilder: (context, item) {
+        itemBuilder: (context, index) {
           return ListTile(
             dense: true,
-            title: Text(item),
+            title: Text(_items[index]),
           );
         },
       ),

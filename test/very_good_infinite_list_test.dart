@@ -46,12 +46,12 @@ void main() {
                     child: const Text('REBUILD'),
                   ),
                   Expanded(
-                    child: InfiniteList<int>(
+                    child: InfiniteList(
                       key: const Key('__infinite_list__'),
                       scrollController: !useExternalScrollController
                           ? null
                           : scrollController,
-                      items: List.generate(1000, (i) => i),
+                      itemCount: 1000,
                       hasReachedMax: false,
                       onFetchData: emptyCallback,
                       itemBuilder: (_, i) => Text('$i'),
@@ -84,7 +84,7 @@ void main() {
           await tester.pumpAndSettle();
         }
 
-        var items = [1, 2, 3];
+        var itemCount = 3;
         var hasReachedMax = true;
 
         var onFetchDataCalls = 0;
@@ -100,8 +100,8 @@ void main() {
                     child: const Text('REBUILD'),
                   ),
                   Expanded(
-                    child: InfiniteList<int>(
-                      items: items,
+                    child: InfiniteList(
+                      itemCount: itemCount,
                       hasReachedMax: hasReachedMax,
                       onFetchData: () => onFetchDataCalls++,
                       itemBuilder: (_, i) => Text('$i'),
@@ -113,7 +113,7 @@ void main() {
           ),
         );
 
-        items = [1, 2, 3, 4, 5];
+        itemCount = 5;
         hasReachedMax = false;
         await rebuild();
 
@@ -125,8 +125,8 @@ void main() {
       'renders ListView',
       (tester) async {
         await tester.pumpApp(
-          InfiniteList<int>(
-            items: [1, 2, 3],
+          InfiniteList(
+            itemCount: 3,
             hasReachedMax: false,
             onFetchData: emptyCallback,
             itemBuilder: (_, i) => Text('$i'),
@@ -143,8 +143,8 @@ void main() {
         var itemBuilderCalls = 0;
 
         await tester.pumpApp(
-          InfiniteList<int>(
-            items: [1, 2, 3],
+          InfiniteList(
+            itemCount: 3,
             hasReachedMax: false,
             onFetchData: emptyCallback,
             itemBuilder: (_, i) {
@@ -158,9 +158,9 @@ void main() {
         );
 
         expect(itemBuilderCalls, equals(3));
+        expect(find.byKey(const Key('__test_target_0__')), findsOneWidget);
         expect(find.byKey(const Key('__test_target_1__')), findsOneWidget);
         expect(find.byKey(const Key('__test_target_2__')), findsOneWidget);
-        expect(find.byKey(const Key('__test_target_3__')), findsOneWidget);
       },
     );
 
@@ -170,8 +170,8 @@ void main() {
         var separatorBuilderCalls = 0;
 
         await tester.pumpApp(
-          InfiniteList<int>(
-            items: [1, 2, 3],
+          InfiniteList(
+            itemCount: 3,
             hasReachedMax: false,
             onFetchData: emptyCallback,
             separatorBuilder: (_) {
@@ -192,8 +192,8 @@ void main() {
         'renders no list items by default',
         (tester) async {
           await tester.pumpApp(
-            InfiniteList<int>(
-              items: [],
+            InfiniteList(
+              itemCount: 0,
               hasReachedMax: false,
               onFetchData: emptyCallback,
               itemBuilder: (_, i) => Text('$i'),
@@ -216,8 +216,8 @@ void main() {
           const key = Key('__test_target__');
 
           await tester.pumpApp(
-            InfiniteList<int>(
-              items: [],
+            InfiniteList(
+              itemCount: 0,
               hasReachedMax: false,
               onFetchData: emptyCallback,
               emptyBuilder: (_) => const Text('__EMPTY__', key: key),
@@ -235,9 +235,9 @@ void main() {
         'renders default errorBuilder',
         (tester) async {
           await tester.pumpApp(
-            InfiniteList<int>(
+            InfiniteList(
               hasError: true,
-              items: [],
+              itemCount: 0,
               hasReachedMax: false,
               onFetchData: emptyCallback,
               itemBuilder: (_, i) => Text('$i'),
@@ -254,9 +254,9 @@ void main() {
           const key = Key('__test_target__');
 
           await tester.pumpApp(
-            InfiniteList<int>(
+            InfiniteList(
               hasError: true,
-              items: [],
+              itemCount: 0,
               hasReachedMax: false,
               onFetchData: emptyCallback,
               errorBuilder: (_) => const Text('__ERROR__', key: key),
@@ -274,9 +274,9 @@ void main() {
         'renders default loadingBuilder',
         (tester) async {
           await tester.pumpApp(
-            InfiniteList<int>(
+            InfiniteList(
               isLoading: true,
-              items: [1, 2, 3],
+              itemCount: 3,
               hasReachedMax: false,
               onFetchData: emptyCallback,
               itemBuilder: (_, i) => Text('$i'),
@@ -293,9 +293,9 @@ void main() {
           const key = Key('__test_target__');
 
           await tester.pumpApp(
-            InfiniteList<int>(
+            InfiniteList(
               isLoading: true,
-              items: [1, 2, 3],
+              itemCount: 3,
               hasReachedMax: false,
               onFetchData: emptyCallback,
               loadingBuilder: (_) => const Text('__LOADING__', key: key),

@@ -27,17 +27,17 @@ class AdvancedExample extends StatelessWidget {
         children: [
           _Header(),
           Expanded(
-            child: InfiniteList<Person>(
-              items: state.values,
+            child: InfiniteList(
+              itemCount: state.values.length,
               isLoading: state.isLoading,
               hasError: state.error != null,
               hasReachedMax: state.hasReachedMax,
               onFetchData: () => context.read<PeopleCubit>().loadData(),
               separatorBuilder: (context) => const Divider(),
-              itemBuilder: (context, person) {
+              itemBuilder: (context, index) {
                 return ListTile(
                   dense: true,
-                  title: Text(person.name),
+                  title: Text(state.values[index].name),
                 );
               },
             ),

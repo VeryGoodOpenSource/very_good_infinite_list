@@ -30,6 +30,7 @@
 .pub/
 build/
 pubspec.lock
+**/.fvm
 
 # Android related
 **/android/**/gradle-wrapper.jar

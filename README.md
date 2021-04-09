@@ -23,11 +23,11 @@ A library for easily displaying paginated data, created by [Very Good Ventures][
 
 ## Usage
 
-A basic `InfiniteList` requires four parameters:
+The `InfiniteList` API is very similar to that of `ListView.builder`. A basic implementation requires four parameters:
 
-- A list of `items` that are displayed using the `itemBuilder`.
-- An `itemBuilder` that is responsible for returning a widget for every element in `items`.
-- `hasReachedMax` that indicates if any more data is available.
+- An `itemCount` that represents the amount of items that should be rendered using the `itemBuilder`.
+- An `itemBuilder` that is responsible for returning a widget for every index of the `itemCount`.
+- An `hasReachedMax` flag that indicates if any more data is available.
 - An `onFetchData` callback that's triggered whenever new data should be fetched.
 
 ## Example
@@ -44,7 +44,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var _items = <String>[];
+ var _items = <String>[];
   var _isLoading = false;
 
   void _fetchData() async {
@@ -54,6 +54,10 @@ class _MyAppState extends State<MyApp> {
 
     await Future.delayed(const Duration(seconds: 1));
 
+    if (!mounted) {
+      return;
+    }
+
     setState(() {
       _isLoading = false;
       _items = List.generate(_items.length + 10, (i) => 'Item $i');
@@ -62,17 +66,22 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Infinite List')),
-        body: InfiniteList<String>(
-          items: _items,
-          hasReachedMax: false,
-          isLoading: _isLoading,
-          onFetchData: _fetchData,
-          separatorBuilder: (context) => const Divider(),
-          itemBuilder: (context, item) => ListTile(title: Text(item)),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Simple Example'),
+      ),
+      body: InfiniteList(
+        itemCount: _items.length,
+        hasReachedMax: false,
+        isLoading: _isLoading,
+        onFetchData: _fetchData,
+        separatorBuilder: (context) => const Divider(),
+        itemBuilder: (context, index) {
+          return ListTile(
+            dense: true,
+            title: Text(_items[index]),
+          );
+        },
       ),
     );
   }
@@ -87,10 +96,10 @@ class _MyAppState extends State<MyApp> {
 
 ```dart
 InfiniteList<String>(
-  items: ['Al', 'Felix', 'Jay'],
+  itemCount: 3,
   hasReachedMax: false,
   onFetchData: () => _fetchData(),
-  itemBuilder: (context, item) => ListTile(title: Text(item)),
+  itemBuilder: (context, index) => ListTile(title: Text('$index')),
 
   // An optional [ScrollController] this [InfiniteList] will attach to.
   // It's used to detect when the list has scrolled to the appropriate position
