@@ -243,26 +243,42 @@ class _InfiniteListState extends State<InfiniteList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    final hasItems = widget.itemCount != 0;
+
+    final showEmpty = !widget.isLoading &&
+        widget.itemCount == 0 &&
+        widget.emptyBuilder != null;
+    final showBottomWidget = showEmpty || widget.isLoading || widget.hasError;
+    final showSeparator = widget.separatorBuilder != null;
+    final separatorCount = !showSeparator ? 0 : widget.itemCount - 1;
+
+    final itemCount = (!hasItems ? 0 : widget.itemCount + separatorCount) +
+        (showEmpty || widget.isLoading || widget.hasError ? 1 : 0);
+    final lastItemIndex = itemCount - 1;
+
+    return ListView.builder(
       controller: _scrollController,
       reverse: widget.reverse,
       padding: widget.padding,
-      children: [
-        if (!widget.isLoading &&
-            widget.itemCount == 0 &&
-            widget.emptyBuilder != null)
-          widget.emptyBuilder!(context)
-        else
-          for (var i = 0; i < widget.itemCount; i++) ...[
-            if (i != 0 && widget.separatorBuilder != null)
-              widget.separatorBuilder!(context),
-            widget.itemBuilder(context, i),
-          ],
-        if (widget.hasError)
-          _errorBuilder(context)
-        else if (widget.isLoading)
-          _loadingBuilder(context),
-      ],
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        if (index == lastItemIndex && showBottomWidget) {
+          if (showEmpty) {
+            return widget.emptyBuilder!(context);
+          } else if (widget.hasError) {
+            return _errorBuilder(context);
+          } else {
+            return _loadingBuilder(context);
+          }
+        } else {
+          if (showSeparator && index % 2 == 1) {
+            return widget.separatorBuilder!(context);
+          } else {
+            final itemIndex = !showSeparator ? index : (index / 2).floor();
+            return widget.itemBuilder(context, itemIndex);
+          }
+        }
+      },
     );
   }
 }

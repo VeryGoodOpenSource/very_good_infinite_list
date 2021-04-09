@@ -140,38 +140,35 @@ void main() {
     testWidgets(
       'renders items using itemBuilder',
       (tester) async {
+        const itemCount = 50;
         var itemBuilderCalls = 0;
 
         await tester.pumpApp(
           InfiniteList(
-            itemCount: 3,
-            hasReachedMax: false,
+            itemCount: itemCount,
+            hasReachedMax: true,
             onFetchData: emptyCallback,
             itemBuilder: (_, i) {
               itemBuilderCalls++;
-              return Text(
-                '$i',
-                key: Key('__test_target_${i}__'),
-              );
+              return Text('$i');
             },
           ),
         );
 
-        expect(itemBuilderCalls, equals(3));
-        expect(find.byKey(const Key('__test_target_0__')), findsOneWidget);
-        expect(find.byKey(const Key('__test_target_1__')), findsOneWidget);
-        expect(find.byKey(const Key('__test_target_2__')), findsOneWidget);
+        expect(itemBuilderCalls, equals(itemCount));
       },
     );
 
     testWidgets(
       'renders separators in between items using separatorBuilder',
       (tester) async {
+        const itemCount = 20;
+        const separatorCount = itemCount - 1;
         var separatorBuilderCalls = 0;
 
         await tester.pumpApp(
           InfiniteList(
-            itemCount: 3,
+            itemCount: itemCount,
             hasReachedMax: false,
             onFetchData: emptyCallback,
             separatorBuilder: (_) {
@@ -182,8 +179,7 @@ void main() {
           ),
         );
 
-        expect(separatorBuilderCalls, equals(2));
-        expect(find.byType(Divider), findsNWidgets(2));
+        expect(separatorBuilderCalls, equals(separatorCount));
       },
     );
 
