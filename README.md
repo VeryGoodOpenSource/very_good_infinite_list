@@ -155,7 +155,7 @@ InfiniteList<String>(
   // Is optional and can be `null`.
   padding: const EdgeInsets.all(16.0),
 
-  // An optional builder that's shown when the list of [items] is empty.
+  // An optional builder that's shown when the list of items is empty.
   //
   // If `null`, nothing is shown.
   emptyBuilder: () => const Center(child: Text('No items.')),

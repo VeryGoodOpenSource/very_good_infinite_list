@@ -138,6 +138,26 @@ void main() {
     );
 
     testWidgets(
+      'passes padding to internal ListView',
+      (tester) async {
+        const padding = EdgeInsets.all(16.0);
+
+        await tester.pumpApp(
+          InfiniteList(
+            padding: padding,
+            itemCount: 3,
+            hasReachedMax: false,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        final listView = tester.widget<ListView>(find.byType(ListView));
+        expect(listView.padding, equals(padding));
+      },
+    );
+
+    testWidgets(
       'renders items using itemBuilder',
       (tester) async {
         const itemCount = 50;
