@@ -253,7 +253,7 @@ class _InfiniteListState extends State<InfiniteList> {
     final separatorCount = !showSeparator ? 0 : widget.itemCount - 1;
 
     final itemCount = (!hasItems ? 0 : widget.itemCount + separatorCount) +
-        (showEmpty || widget.isLoading || widget.hasError ? 1 : 0);
+        (showBottomWidget ? 1 : 0);
     final lastItemIndex = itemCount - 1;
 
     return ListView.builder(
@@ -263,12 +263,12 @@ class _InfiniteListState extends State<InfiniteList> {
       itemCount: itemCount,
       itemBuilder: (context, index) {
         if (index == lastItemIndex && showBottomWidget) {
-          if (showEmpty) {
-            return widget.emptyBuilder!(context);
-          } else if (widget.hasError) {
+          if (widget.hasError) {
             return _errorBuilder(context);
-          } else {
+          } else if (widget.isLoading) {
             return _loadingBuilder(context);
+          } else {
+            return widget.emptyBuilder!(context);
           }
         } else {
           if (showSeparator && index % 2 == 1) {
