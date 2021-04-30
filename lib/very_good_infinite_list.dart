@@ -179,7 +179,8 @@ class _InfiniteListState extends State<InfiniteList> {
       _initScrollController();
     }
 
-    if (widget.itemCount != oldWidget.itemCount) {
+    if (widget.itemCount != oldWidget.itemCount ||
+        widget.hasReachedMax != oldWidget.hasReachedMax) {
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         _attemptFetch();
       });
