@@ -157,14 +157,14 @@ class InfiniteList extends StatefulWidget {
 }
 
 class _InfiniteListState extends State<InfiniteList> {
-  late final _Debouncer _debounce;
+  late final CallbackDebouncer _debounce;
 
   ScrollController? _scrollController;
 
   @override
   void initState() {
     super.initState();
-    _debounce = _Debouncer(widget.debounceDuration);
+    _debounce = CallbackDebouncer(widget.debounceDuration);
     _initScrollController();
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _attemptFetch();
@@ -284,17 +284,32 @@ class _InfiniteListState extends State<InfiniteList> {
   }
 }
 
-class _Debouncer {
-  _Debouncer(this._delay);
+/// {@template callback_debouncer}
+/// A model used for debouncing callbacks.
+///
+/// Is only used internally and should not be used explicitly.
+/// {@endtemplate}
+@visibleForTesting
+class CallbackDebouncer {
+  /// {@macro callback_debouncer}
+  CallbackDebouncer(this._delay);
 
   final Duration _delay;
   Timer? _timer;
 
-  void call(void Function() action) {
-    _timer?.cancel();
-    _timer = Timer(_delay, action);
+  /// Calls the given [callback] after the given duration has passed.
+  @visibleForTesting
+  void call(void Function() callback) {
+    if (_delay == Duration.zero) {
+      callback();
+    } else {
+      _timer?.cancel();
+      _timer = Timer(_delay, callback);
+    }
   }
 
+  /// Stops any running timers and disposes this instance.
+  @visibleForTesting
   void dispose() {
     _timer?.cancel();
   }
