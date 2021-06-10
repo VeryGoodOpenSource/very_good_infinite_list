@@ -24,6 +24,7 @@ class InfiniteList extends StatefulWidget {
   const InfiniteList({
     Key? key,
     this.scrollController,
+    this.physics,
     this.scrollExtentThreshold = 400.0,
     this.debounceDuration = const Duration(milliseconds: 100),
     this.reverse = false,
@@ -48,6 +49,11 @@ class InfiniteList extends StatefulWidget {
   /// Is optional and mostly used only for testing. If set to `null`, an
   /// internal [ScrollController] is used instead.
   final ScrollController? scrollController;
+
+  /// An optional [ScrollPhysics] this [InfiniteList] will use.
+  ///
+  /// If set to `null`, the default [ScrollPhysics] will be used instead.
+  final ScrollPhysics? physics;
 
   /// The offset, in pixels, that the [scrollController] must be scrolled over
   /// to trigger [onFetchData].
@@ -259,6 +265,7 @@ class _InfiniteListState extends State<InfiniteList> {
 
     return ListView.builder(
       controller: _scrollController,
+      physics: widget.physics,
       reverse: widget.reverse,
       padding: widget.padding,
       itemCount: itemCount,
