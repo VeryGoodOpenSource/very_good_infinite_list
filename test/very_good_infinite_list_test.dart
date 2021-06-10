@@ -1,517 +1,350 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
+
+extension on WidgetTester {
+  Future<void> pumpApp(Widget widget) async {
+    await pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(),
+          body: widget,
+        ),
+      ),
+    );
+    await pump();
+  }
+}
 
 void main() {
   group('InfiniteList', () {
-    testWidgets('updates scroll controller when changed', (tester) async {
-      var itemLoaderCallCount = 0;
-      final itemLoader = (int limit, {int? start}) async {
-        itemLoaderCallCount++;
-        return List.generate(15, (i) => i);
-      };
-      final oldController = ScrollController();
-      final newController = ScrollController();
-      var scrollController = oldController;
+    void emptyCallback() {}
 
-      await tester.pumpApp(
-        StatefulBuilder(
-          builder: (context, setState) {
-            return Scaffold(
-              body: InfiniteList<int>(
-                itemLoader: itemLoader,
-                scrollController: scrollController,
-                builder: InfiniteListBuilder(
-                  success: (_, item) {
-                    return ListTile(
-                      key: Key('__item_${item}__'),
-                      title: Text('Item $item'),
-                    );
-                  },
-                ),
-              ),
-              floatingActionButton: FloatingActionButton(
-                child: const Icon(Icons.add),
-                onPressed: () {
-                  setState(() {
-                    scrollController = newController;
-                  });
-                },
-              ),
-            );
-          },
-        ),
-      );
+    testWidgets(
+      'disposes old scrollController when it is replaced',
+      (tester) async {
+        const key = Key('__test_target__');
 
-      await tester.pump();
+        final scrollController = ScrollController();
 
-      expect(itemLoaderCallCount, equals(1));
+        Future<void> rebuild() async {
+          await tester.tap(find.byKey(key));
+          await tester.pumpAndSettle();
+        }
 
-      await tester.drag(
-        find.byKey(const Key('__item_0__')),
-        const Offset(0, -100),
-      );
+        var useExternalScrollController = true;
 
-      await tester.pump();
-      expect(find.byKey(const Key('__item_0__')), findsNothing);
-      await tester.tap(find.byType(FloatingActionButton));
+        await tester.pumpApp(
+          StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                children: [
+                  TextButton(
+                    key: key,
+                    onPressed: () => setState(() {}),
+                    child: const Text('REBUILD'),
+                  ),
+                  Expanded(
+                    child: InfiniteList(
+                      key: const Key('__infinite_list__'),
+                      scrollController: !useExternalScrollController
+                          ? null
+                          : scrollController,
+                      itemCount: 1000,
+                      hasReachedMax: false,
+                      onFetchData: emptyCallback,
+                      itemBuilder: (_, i) => Text('$i'),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
 
-      await tester.pump();
+        useExternalScrollController = false;
+        await rebuild();
 
-      expect(oldController.hasClients, isFalse);
-      expect(newController.hasClients, isTrue);
+        expect(
+          () => scrollController.hasListeners,
+          throwsFlutterError,
+        );
+      },
+    );
 
-      newController.jumpTo(0);
-      await tester.pump();
+    testWidgets(
+      'attempts to fetch new elements if rebuild occurs '
+      'with different set of items',
+      (tester) async {
+        const key = Key('__test_target__');
 
-      expect(find.byKey(const Key('__item_0__')), findsOneWidget);
-      expect(itemLoaderCallCount, equals(1));
-    });
+        Future<void> rebuild() async {
+          await tester.tap(find.byKey(key));
+          await tester.pumpAndSettle();
+        }
 
-    testWidgets('reverse updates list view', (tester) async {
-      final itemLoader = (int limit, {int? start}) async {
-        return List.generate(15, (i) => i);
-      };
+        var itemCount = 3;
+        var hasReachedMax = true;
 
-      await tester.pumpApp(
-        InfiniteList(
-          reverse: true,
-          itemLoader: itemLoader,
-          builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-        ),
-      );
+        var onFetchDataCalls = 0;
 
-      await tester.pump();
+        await tester.pumpApp(
+          StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                children: [
+                  TextButton(
+                    key: key,
+                    onPressed: () => setState(() {}),
+                    child: const Text('REBUILD'),
+                  ),
+                  Expanded(
+                    child: InfiniteList(
+                      itemCount: itemCount,
+                      hasReachedMax: hasReachedMax,
+                      onFetchData: () => onFetchDataCalls++,
+                      itemBuilder: (_, i) => Text('$i'),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
 
-      final listView = tester.widget<ListView>(find.byType(ListView));
-      expect(listView.reverse, isTrue);
-    });
+        itemCount = 5;
+        hasReachedMax = false;
+        await rebuild();
 
-    testWidgets('list view is not reversed by default', (tester) async {
-      final itemLoader = (int limit, {int? start}) async {
-        return List.generate(15, (i) => i);
-      };
+        expect(onFetchDataCalls, equals(1));
+      },
+    );
 
-      await tester.pumpApp(
-        InfiniteList(
-          itemLoader: itemLoader,
-          builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-        ),
-      );
+    testWidgets(
+      'renders ListView',
+      (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 3,
+            hasReachedMax: false,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
 
-      await tester.pump();
+        expect(find.byType(ListView), findsOneWidget);
+      },
+    );
 
-      final listView = tester.widget<ListView>(find.byType(ListView));
-      expect(listView.reverse, isFalse);
-    });
+    testWidgets(
+      'passes padding to internal ListView',
+      (tester) async {
+        const padding = EdgeInsets.all(16.0);
 
-    testWidgets('list view supports custom padding', (tester) async {
-      final itemLoader = (int limit, {int? start}) async {
-        return List.generate(15, (i) => i);
-      };
-      const padding = EdgeInsets.all(16);
-      await tester.pumpApp(
-        InfiniteList(
-          padding: padding,
-          itemLoader: itemLoader,
-          builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-        ),
-      );
+        await tester.pumpApp(
+          InfiniteList(
+            padding: padding,
+            itemCount: 3,
+            hasReachedMax: false,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
 
-      await tester.pump();
+        final listView = tester.widget<ListView>(find.byType(ListView));
+        expect(listView.padding, equals(padding));
+      },
+    );
 
-      final listView = tester.widget<ListView>(find.byType(ListView));
-      expect(listView.padding, equals(padding));
-    });
+    testWidgets(
+      'renders items using itemBuilder',
+      (tester) async {
+        const itemCount = 50;
+        var itemBuilderCalls = 0;
 
-    testWidgets('invokes itemLoader immediately', (tester) async {
-      var itemLoaderCallCount = 0;
-      final itemLoader = (int limit, {int? start}) async {
-        itemLoaderCallCount++;
-      };
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: itemCount,
+            hasReachedMax: true,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) {
+              itemBuilderCalls++;
+              return Text('$i');
+            },
+          ),
+        );
 
-      await tester.pumpApp(InfiniteList(
-        itemLoader: itemLoader,
-        builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-      ));
+        expect(itemBuilderCalls, equals(itemCount));
+      },
+    );
 
-      expect(itemLoaderCallCount, equals(1));
-    });
+    testWidgets(
+      'renders separators in between items using separatorBuilder',
+      (tester) async {
+        const itemCount = 20;
+        const separatorCount = itemCount - 1;
+        var separatorBuilderCalls = 0;
 
-    testWidgets('renders default loading widget by default', (tester) async {
-      await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int? start}) async => [],
-        builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-      ));
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: itemCount,
+            hasReachedMax: false,
+            onFetchData: emptyCallback,
+            separatorBuilder: (_) {
+              separatorBuilderCalls++;
+              return const Divider();
+            },
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
 
-      expect(find.byKey(const Key('__default_loading__')), findsOneWidget);
-    });
+        expect(separatorBuilderCalls, equals(separatorCount));
+      },
+    );
 
-    testWidgets('renders default bottom loader widget by default',
+    group('with an empty set of items', () {
+      testWidgets(
+        'renders no list items by default',
         (tester) async {
-      await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int? start}) async {
-          return List.generate(1, (i) => i);
+          await tester.pumpApp(
+            InfiniteList(
+              itemCount: 0,
+              hasReachedMax: false,
+              onFetchData: emptyCallback,
+              itemBuilder: (_, i) => Text('$i'),
+            ),
+          );
+
+          expect(
+            find.descendant(
+              of: find.byType(ListView),
+              matching: find.byType(Widget),
+            ),
+            findsNothing,
+          );
         },
-        builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-      ));
-
-      await tester.pump();
-
-      expect(
-        find.byKey(const Key('__default_bottom_loader__')),
-        findsOneWidget,
       );
-    });
 
-    testWidgets('renders default error loader widget by default',
+      testWidgets(
+        'renders custom emptyBuilder',
         (tester) async {
-      var itemLoaderCallCount = 0;
-      final itemLoaderResults = [
-        (int limit, {int? start}) async {
-          return List.generate(15, (i) => i);
+          const key = Key('__test_target__');
+
+          await tester.pumpApp(
+            InfiniteList(
+              itemCount: 0,
+              hasReachedMax: false,
+              onFetchData: emptyCallback,
+              emptyBuilder: (_) => const Text('__EMPTY__', key: key),
+              itemBuilder: (_, i) => Text('$i'),
+            ),
+          );
+
+          expect(find.byKey(key), findsOneWidget);
         },
-        (int limit, {int? start}) async {
-          throw Exception('oops');
-        },
-      ];
-      await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int? start}) async {
-          itemLoaderCallCount++;
-          return itemLoaderResults.removeAt(0).call(limit, start: start);
-        },
-        builder: InfiniteListBuilder(
-          success: (_, item) {
-            return ListTile(
-              key: Key('__item_${item}__'),
-              title: Text('Item $item'),
-            );
-          },
-        ),
-      ));
-
-      await tester.pump();
-
-      expect(itemLoaderCallCount, equals(1));
-
-      await tester.drag(
-        find.byKey(const Key('__item_9__')),
-        const Offset(0, -500),
-      );
-
-      await tester.pump();
-
-      expect(
-        find.byKey(const Key('__default_bottom_loader__')),
-        findsOneWidget,
-      );
-
-      await tester.pumpAndSettle();
-
-      expect(itemLoaderCallCount, equals(2));
-      expect(
-        find.byKey(const Key('__default_error_loader__')),
-        findsOneWidget,
       );
     });
 
-    testWidgets('renders default error widget by default', (tester) async {
-      var itemLoaderCallCount = 0;
-      final itemLoaderResults = [
-        (int limit, {int? start}) async {
-          return List.generate(15, (i) => i);
-        },
-        (int limit, {int? start}) async {
-          throw InfiniteListException();
-        },
-      ];
-      await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int? start}) async {
-          itemLoaderCallCount++;
-          return itemLoaderResults.removeAt(0).call(limit, start: start);
-        },
-        builder: InfiniteListBuilder(
-          success: (_, item) {
-            return ListTile(
-              key: Key('__item_${item}__'),
-              title: Text('Item $item'),
-            );
-          },
-        ),
-      ));
-
-      await tester.pump();
-
-      expect(itemLoaderCallCount, equals(1));
-
-      await tester.drag(
-        find.byKey(const Key('__item_9__')),
-        const Offset(0, -500),
-      );
-
-      await tester.pump();
-
-      expect(
-        find.byKey(const Key('__default_bottom_loader__')),
-        findsOneWidget,
-      );
-
-      await tester.pumpAndSettle();
-
-      expect(itemLoaderCallCount, equals(2));
-      expect(
-        find.byKey(const Key('__default_error__')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('retry from first time failure', (tester) async {
-      var itemLoaderCallCount = 0;
-      final itemLoaderResults = [
-        (int limit, {int? start}) async {
-          throw InfiniteListException();
-        },
-        (int limit, {int? start}) async {
-          return List.generate(15, (i) => i);
-        },
-      ];
-      await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int? start}) async {
-          itemLoaderCallCount++;
-          return itemLoaderResults.removeAt(0).call(limit, start: start);
-        },
-        builder: InfiniteListBuilder(
-          success: (_, item) {
-            return ListTile(
-              key: Key('__item_${item}__'),
-              title: Text('Item $item'),
-            );
-          },
-        ),
-      ));
-
-      await tester.pump();
-
-      expect(itemLoaderCallCount, equals(1));
-
-      await tester.tap(find.byType(IconButton));
-      await tester.pump();
-
-      expect(find.byKey(const Key('__item_9__')), findsOneWidget);
-      expect(itemLoaderCallCount, equals(2));
-    });
-
-    testWidgets('retry from subsequent failure (critical)', (tester) async {
-      var itemLoaderCallCount = 0;
-      final itemLoaderResults = [
-        (int limit, {int? start}) async {
-          return List.generate(15, (i) => i);
-        },
-        (int limit, {int? start}) async {
-          throw InfiniteListException();
-        },
-        (int limit, {int? start}) async {
-          return List.generate(15, (i) => i + start!);
-        },
-      ];
-      await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int? start}) async {
-          itemLoaderCallCount++;
-          return itemLoaderResults.removeAt(0).call(limit, start: start);
-        },
-        builder: InfiniteListBuilder(
-          success: (_, item) {
-            return ListTile(
-              key: Key('__item_${item}__'),
-              title: Text('Item $item'),
-            );
-          },
-        ),
-      ));
-
-      await tester.pump();
-
-      expect(itemLoaderCallCount, equals(1));
-
-      await tester.drag(
-        find.byKey(const Key('__item_9__')),
-        const Offset(0, -500),
-      );
-
-      await tester.pump();
-
-      expect(
-        find.byKey(const Key('__default_bottom_loader__')),
-        findsOneWidget,
-      );
-
-      await tester.pumpAndSettle();
-
-      expect(itemLoaderCallCount, equals(2));
-
-      await tester.tap(find.byType(IconButton));
-      await tester.pump();
-
-      await tester.drag(
-        find.byKey(const Key('__item_10__')),
-        const Offset(0, -500),
-      );
-      expect(itemLoaderCallCount, equals(3));
-    });
-
-    testWidgets('retry from subsequent failure', (tester) async {
-      var itemLoaderCallCount = 0;
-      final itemLoaderResults = [
-        (int limit, {int? start}) async {
-          return List.generate(15, (i) => i);
-        },
-        (int limit, {int? start}) async {
-          throw Exception('oops');
-        },
-        (int limit, {int? start}) async {
-          return List.generate(15, (i) => i + start!);
-        },
-      ];
-      await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int? start}) async {
-          itemLoaderCallCount++;
-          return itemLoaderResults.removeAt(0).call(limit, start: start);
-        },
-        builder: InfiniteListBuilder(
-          success: (_, item) {
-            return ListTile(
-              key: Key('__item_${item}__'),
-              title: Text('Item $item'),
-            );
-          },
-        ),
-      ));
-
-      await tester.pump();
-
-      expect(itemLoaderCallCount, equals(1));
-
-      await tester.drag(
-        find.byKey(const Key('__item_9__')),
-        const Offset(0, -500),
-      );
-
-      await tester.pump();
-
-      expect(
-        find.byKey(const Key('__default_bottom_loader__')),
-        findsOneWidget,
-      );
-
-      await tester.pumpAndSettle();
-
-      expect(itemLoaderCallCount, equals(2));
-
-      await tester.tap(find.byType(IconButton));
-      await tester.pump();
-
-      await tester.drag(
-        find.byKey(const Key('__item_10__')),
-        const Offset(0, -500),
-      );
-      expect(itemLoaderCallCount, equals(3));
-    });
-
-    testWidgets('does not render bottom loader when there are no more results',
+    group('with hasError set to true', () {
+      testWidgets(
+        'renders default errorBuilder',
         (tester) async {
-      var itemLoaderCallCount = 0;
-      final itemLoaderResults = [
-        (int limit, {int? start}) async {
-          return List.generate(15, (i) => i);
+          await tester.pumpApp(
+            InfiniteList(
+              hasError: true,
+              itemCount: 0,
+              hasReachedMax: false,
+              onFetchData: emptyCallback,
+              itemBuilder: (_, i) => Text('$i'),
+            ),
+          );
+
+          expect(find.text('Error'), findsOneWidget);
         },
-        (int limit, {int? start}) async => <int>[],
-      ];
-      await tester.pumpApp(InfiniteList<int>(
-        itemLoader: (int limit, {int? start}) async {
-          itemLoaderCallCount++;
-          return itemLoaderResults.removeAt(0).call(limit, start: start);
-        },
-        builder: InfiniteListBuilder(
-          success: (_, item) {
-            return ListTile(
-              key: Key('__item_${item}__'),
-              title: Text('Item $item'),
-            );
-          },
-        ),
-      ));
-
-      await tester.pump();
-
-      expect(itemLoaderCallCount, equals(1));
-
-      await tester.drag(
-        find.byKey(const Key('__item_9__')),
-        const Offset(0, -500),
       );
 
-      await tester.pump();
-
-      expect(
-        find.byKey(const Key('__default_bottom_loader__')),
-        findsOneWidget,
-      );
-
-      await tester.pumpAndSettle();
-
-      expect(itemLoaderCallCount, equals(2));
-      expect(
-        find.byKey(const Key('__default_error_loader__')),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const Key('__default_bottom_loader__')),
-        findsNothing,
-      );
-    });
-
-    testWidgets('renders default empty widget by default', (tester) async {
-      await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int? start}) async => [],
-        builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-      ));
-
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('__default_empty__')), findsOneWidget);
-    });
-
-    testWidgets('renders default error widget by default (generic)',
+      testWidgets(
+        'renders custom errorBuilder',
         (tester) async {
-      await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int? start}) async {
-          throw Exception('oops');
-        },
-        builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-      ));
+          const key = Key('__test_target__');
 
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('__default_error__')), findsOneWidget);
+          await tester.pumpApp(
+            InfiniteList(
+              hasError: true,
+              itemCount: 0,
+              hasReachedMax: false,
+              onFetchData: emptyCallback,
+              errorBuilder: (_) => const Text('__ERROR__', key: key),
+              itemBuilder: (_, i) => Text('$i'),
+            ),
+          );
+
+          expect(find.byKey(key), findsOneWidget);
+        },
+      );
     });
 
-    testWidgets('renders default error widget by default (specific)',
+    group('with isLoading set to true', () {
+      testWidgets(
+        'renders default loadingBuilder',
         (tester) async {
-      await tester.pumpApp(InfiniteList(
-        itemLoader: (int limit, {int? start}) async {
-          throw InfiniteListException();
-        },
-        builder: InfiniteListBuilder(success: (_, __) => const SizedBox()),
-      ));
+          await tester.pumpApp(
+            InfiniteList(
+              isLoading: true,
+              itemCount: 3,
+              hasReachedMax: false,
+              onFetchData: emptyCallback,
+              itemBuilder: (_, i) => Text('$i'),
+            ),
+          );
 
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('__default_error__')), findsOneWidget);
+          expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'renders custom loadingBuilder',
+        (tester) async {
+          const key = Key('__test_target__');
+
+          await tester.pumpApp(
+            InfiniteList(
+              isLoading: true,
+              itemCount: 3,
+              hasReachedMax: false,
+              onFetchData: emptyCallback,
+              loadingBuilder: (_) => const Text('__LOADING__', key: key),
+              itemBuilder: (_, i) => Text('$i'),
+            ),
+          );
+
+          expect(find.byKey(key), findsOneWidget);
+        },
+      );
     });
   });
-}
 
-extension on WidgetTester {
-  Future<void> pumpApp(Widget widget) {
-    return pumpWidget(
-      MaterialApp(home: Scaffold(body: widget)),
-    );
-  }
+  group('CallbackDebouncer', () {
+    test('calls callback after specified duration expires', () async {
+      const duration = Duration(milliseconds: 250);
+
+      var callCount = 0;
+
+      CallbackDebouncer(duration)(() => callCount++);
+
+      expect(callCount, equals(0));
+
+      await Future.delayed(duration);
+      expect(callCount, equals(1));
+    });
+
+    test('immediately calls callback if specified duration is zero', () async {
+      var callCount = 0;
+
+      CallbackDebouncer(Duration.zero)(() => callCount++);
+
+      expect(callCount, equals(1));
+    });
+  });
 }
