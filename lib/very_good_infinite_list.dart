@@ -196,7 +196,9 @@ class _InfiniteListState extends State<InfiniteList> {
   @override
   void dispose() {
     _scrollController?.removeListener(_attemptFetch);
-    _scrollController?.dispose();
+    if (widget.scrollController == null) {
+      _scrollController?.dispose();
+    }
     _debounce.dispose();
     super.dispose();
   }
