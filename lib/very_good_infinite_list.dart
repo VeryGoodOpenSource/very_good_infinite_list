@@ -31,7 +31,7 @@ class InfiniteList extends StatefulWidget {
     required this.itemCount,
     this.isLoading = false,
     this.hasError = false,
-    required this.hasReachedMax,
+    this.hasReachedMax = false,
     required this.onFetchData,
     this.padding,
     this.emptyBuilder,
@@ -106,7 +106,7 @@ class InfiniteList extends StatefulWidget {
   ///
   /// While set to `true`, the [onFetchData] callback will not be triggered.
   ///
-  /// Is required and cannot be `null`.
+  /// Is set to `false` by default and cannot be `null`.
   final bool hasReachedMax;
 
   /// The callback method that's called whenever the list is scrolled to the end
@@ -185,8 +185,7 @@ class _InfiniteListState extends State<InfiniteList> {
       _initScrollController();
     }
 
-    if (widget.itemCount != oldWidget.itemCount ||
-        widget.hasReachedMax != oldWidget.hasReachedMax) {
+    if (widget.itemCount != oldWidget.itemCount || widget.hasReachedMax != oldWidget.hasReachedMax) {
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         _attemptFetch();
       });
@@ -207,15 +206,11 @@ class _InfiniteListState extends State<InfiniteList> {
     _scrollController?.removeListener(_attemptFetch);
     _scrollController?.dispose();
 
-    _scrollController = (widget.scrollController ?? ScrollController())
-      ..addListener(_attemptFetch);
+    _scrollController = (widget.scrollController ?? ScrollController())..addListener(_attemptFetch);
   }
 
   void _attemptFetch() {
-    if (_isAtEnd &&
-        !widget.hasReachedMax &&
-        !widget.isLoading &&
-        !widget.hasError) {
+    if (_isAtEnd && !widget.hasReachedMax && !widget.isLoading && !widget.hasError) {
       _debounce(widget.onFetchData);
     }
   }
@@ -254,15 +249,12 @@ class _InfiniteListState extends State<InfiniteList> {
   Widget build(BuildContext context) {
     final hasItems = widget.itemCount != 0;
 
-    final showEmpty = !widget.isLoading &&
-        widget.itemCount == 0 &&
-        widget.emptyBuilder != null;
+    final showEmpty = !widget.isLoading && widget.itemCount == 0 && widget.emptyBuilder != null;
     final showBottomWidget = showEmpty || widget.isLoading || widget.hasError;
     final showSeparator = widget.separatorBuilder != null;
     final separatorCount = !showSeparator ? 0 : widget.itemCount - 1;
 
-    final itemCount = (!hasItems ? 0 : widget.itemCount + separatorCount) +
-        (showBottomWidget ? 1 : 0);
+    final itemCount = (!hasItems ? 0 : widget.itemCount + separatorCount) + (showBottomWidget ? 1 : 0);
     final lastItemIndex = itemCount - 1;
 
     return ListView.builder(

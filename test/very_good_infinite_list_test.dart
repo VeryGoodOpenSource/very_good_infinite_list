@@ -52,7 +52,6 @@ void main() {
                           ? null
                           : scrollController,
                       itemCount: 1000,
-                      hasReachedMax: false,
                       onFetchData: emptyCallback,
                       itemBuilder: (_, i) => Text('$i'),
                     ),
@@ -127,7 +126,6 @@ void main() {
         await tester.pumpApp(
           InfiniteList(
             itemCount: 3,
-            hasReachedMax: false,
             onFetchData: emptyCallback,
             itemBuilder: (_, i) => Text('$i'),
           ),
@@ -146,7 +144,6 @@ void main() {
           InfiniteList(
             padding: padding,
             itemCount: 3,
-            hasReachedMax: false,
             onFetchData: emptyCallback,
             itemBuilder: (_, i) => Text('$i'),
           ),
@@ -189,7 +186,6 @@ void main() {
         await tester.pumpApp(
           InfiniteList(
             itemCount: itemCount,
-            hasReachedMax: false,
             onFetchData: emptyCallback,
             separatorBuilder: (_) {
               separatorBuilderCalls++;
@@ -210,7 +206,6 @@ void main() {
           await tester.pumpApp(
             InfiniteList(
               itemCount: 0,
-              hasReachedMax: false,
               onFetchData: emptyCallback,
               itemBuilder: (_, i) => Text('$i'),
             ),
@@ -234,7 +229,6 @@ void main() {
           await tester.pumpApp(
             InfiniteList(
               itemCount: 0,
-              hasReachedMax: false,
               onFetchData: emptyCallback,
               emptyBuilder: (_) => const Text('__EMPTY__', key: key),
               itemBuilder: (_, i) => Text('$i'),
@@ -254,7 +248,6 @@ void main() {
             InfiniteList(
               hasError: true,
               itemCount: 0,
-              hasReachedMax: false,
               onFetchData: emptyCallback,
               itemBuilder: (_, i) => Text('$i'),
             ),
@@ -273,7 +266,6 @@ void main() {
             InfiniteList(
               hasError: true,
               itemCount: 0,
-              hasReachedMax: false,
               onFetchData: emptyCallback,
               errorBuilder: (_) => const Text('__ERROR__', key: key),
               itemBuilder: (_, i) => Text('$i'),
@@ -293,7 +285,6 @@ void main() {
             InfiniteList(
               isLoading: true,
               itemCount: 3,
-              hasReachedMax: false,
               onFetchData: emptyCallback,
               itemBuilder: (_, i) => Text('$i'),
             ),
@@ -312,7 +303,6 @@ void main() {
             InfiniteList(
               isLoading: true,
               itemCount: 3,
-              hasReachedMax: false,
               onFetchData: emptyCallback,
               loadingBuilder: (_) => const Text('__LOADING__', key: key),
               itemBuilder: (_, i) => Text('$i'),

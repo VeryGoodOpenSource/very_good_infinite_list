@@ -43,7 +43,6 @@ class _SimpleExampleState extends State<SimpleExample> {
       ),
       body: InfiniteList(
         itemCount: _items.length,
-        hasReachedMax: false,
         isLoading: _isLoading,
         onFetchData: _fetchData,
         separatorBuilder: (context) => const Divider(),

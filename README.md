@@ -27,7 +27,7 @@ The `InfiniteList` API is very similar to that of `ListView.builder`. A basic im
 
 - An `itemCount` that represents the amount of items that should be rendered using the `itemBuilder`.
 - An `itemBuilder` that is responsible for returning a widget for every index of the `itemCount`.
-- An `hasReachedMax` flag that indicates if any more data is available.
+- A `hasReachedMax` flag that indicates if any more data is available.
 - An `onFetchData` callback that's triggered whenever new data should be fetched.
 
 ## Example
@@ -72,7 +72,6 @@ class _MyAppState extends State<MyApp> {
       ),
       body: InfiniteList(
         itemCount: _items.length,
-        hasReachedMax: false,
         isLoading: _isLoading,
         onFetchData: _fetchData,
         separatorBuilder: (context) => const Divider(),
