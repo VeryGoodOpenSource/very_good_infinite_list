@@ -119,6 +119,7 @@ class InfiniteList<T> extends StatefulWidget {
     this.reverse = false,
     this.onError,
     this.padding,
+    this.scrollDirection = Axis.vertical,
     double? scrollOffsetThreshold,
   })  : _bottomLoader = bottomLoader,
         _errorLoader = errorLoader,
@@ -132,6 +133,9 @@ class InfiniteList<T> extends StatefulWidget {
 
   /// {@macro infinite_list_builder}
   final InfiniteListBuilder<T> builder;
+
+  /// Defines the scroll direction
+  final Axis scrollDirection;
 
   /// The instance of an [ItemLoader] which is used by the [InfiniteList]
   /// to lazily fetch content.
@@ -280,6 +284,7 @@ class _InfiniteListState<T> extends State<InfiniteList<T>> {
           reverse: widget.reverse,
           controller: _scrollController,
           itemCount: itemCount,
+          scrollDirection: widget.scrollDirection,
           itemBuilder: (context, index) {
             return index >= state.items.length
                 ? state.exception != _ListException.none
