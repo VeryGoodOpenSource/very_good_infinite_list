@@ -2,28 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 class SimpleExample extends StatefulWidget {
+  const SimpleExample({Key? key}) : super(key: key);
+
   static Route<void> route() {
     return MaterialPageRoute(
       builder: (context) {
-        return SimpleExample();
+        return const SimpleExample();
       },
     );
   }
 
   @override
-  _SimpleExampleState createState() => _SimpleExampleState();
+  SimpleExampleState createState() => SimpleExampleState();
 }
 
-class _SimpleExampleState extends State<SimpleExample> {
+class SimpleExampleState extends State<SimpleExample> {
   var _items = <String>[];
   var _isLoading = false;
 
-  void _fetchData() async {
+  Future<void> _fetchData() async {
     setState(() {
       _isLoading = true;
     });
 
-    await Future.delayed(const Duration(seconds: 1));
+    await Future<void>.delayed(const Duration(seconds: 1));
 
     if (!mounted) {
       return;

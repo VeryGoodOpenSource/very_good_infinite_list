@@ -7,16 +7,18 @@ void main() {
     MaterialApp(
       theme: ThemeData(
         dividerTheme: const DividerThemeData(
-          indent: 16.0,
-          space: 0.0,
+          indent: 16,
+          space: 0,
         ),
       ),
-      home: Example(),
+      home: const Example(),
     ),
   );
 }
 
 class Example extends StatelessWidget {
+  const Example({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

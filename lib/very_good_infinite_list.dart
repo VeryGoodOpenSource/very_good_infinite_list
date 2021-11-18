@@ -39,7 +39,10 @@ class InfiniteList extends StatefulWidget {
     this.errorBuilder,
     this.separatorBuilder,
     required this.itemBuilder,
-  })   : assert(scrollExtentThreshold >= 0.0),
+  })  : assert(
+          scrollExtentThreshold >= 0.0,
+          'scrollExtentThreshold must be greater than or equal to 0.0',
+        ),
         super(key: key);
 
   /// An optional [ScrollController] this [InfiniteList] will attach to.
@@ -159,10 +162,15 @@ class InfiniteList extends StatefulWidget {
   final ItemBuilder itemBuilder;
 
   @override
-  _InfiniteListState createState() => _InfiniteListState();
+  InfiniteListState createState() => InfiniteListState();
 }
 
-class _InfiniteListState extends State<InfiniteList> {
+/// The state of an [InfiniteList].
+///
+/// Is only used for internal purposes. Do not use this class directly.
+@protected
+@visibleForTesting
+class InfiniteListState extends State<InfiniteList> {
   late final CallbackDebouncer _debounce;
 
   ScrollController? _scrollController;
@@ -281,7 +289,7 @@ class _InfiniteListState extends State<InfiniteList> {
             return widget.emptyBuilder!(context);
           }
         } else {
-          if (showSeparator && index % 2 == 1) {
+          if (showSeparator && index.isOdd) {
             return widget.separatorBuilder!(context);
           } else {
             final itemIndex = !showSeparator ? index : (index / 2).floor();

@@ -9,40 +9,44 @@ class Person {
 }
 
 class PeopleCubit extends Cubit<PeopleState> {
-  PeopleCubit() : super(PeopleState());
+  PeopleCubit() : super(const PeopleState());
 
   void clear() {
-    emit(PeopleState());
+    emit(const PeopleState());
   }
 
   Future<void> loadData() async {
-    emit(PeopleState(
-      values: state.values,
-      isLoading: true,
-    ));
-    await Future.delayed(const Duration(milliseconds: 500));
+    emit(
+      PeopleState(
+        values: state.values,
+        isLoading: true,
+      ),
+    );
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
     if (state.values.length >= 24) {
-      emit(PeopleState(
-        values: state.values,
-        isLoading: false,
-        hasReachedMax: true,
-      ));
+      emit(
+        PeopleState(
+          values: state.values,
+          hasReachedMax: true,
+        ),
+      );
       return;
     }
 
-    emit(PeopleState(
-      values: List.generate(
-        state.values.length + 3,
-        (i) => Person('Person $i', 20 + (i * 0.5).floor()),
+    emit(
+      PeopleState(
+        values: List.generate(
+          state.values.length + 3,
+          (i) => Person('Person $i', 20 + (i * 0.5).floor()),
+        ),
       ),
-      isLoading: false,
-    ));
+    );
   }
 }
 
 class PeopleState extends Equatable {
-  PeopleState({
+  const PeopleState({
     this.values = const <Person>[],
     this.isLoading = false,
     this.error,

@@ -1,6 +1,6 @@
 // ignore_for_file: invalid_use_of_protected_member
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 extension on WidgetTester {
@@ -138,7 +138,7 @@ void main() {
     testWidgets(
       'passes padding to internal ListView',
       (tester) async {
-        const padding = EdgeInsets.all(16.0);
+        const padding = EdgeInsets.all(16);
 
         await tester.pumpApp(
           InfiniteList(
@@ -325,7 +325,7 @@ void main() {
 
       expect(callCount, equals(0));
 
-      await Future.delayed(duration);
+      await Future<void>.delayed(duration);
       expect(callCount, equals(1));
     });
 
