@@ -3,7 +3,6 @@ library very_good_infinite_list;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 const _kScrollOffsetThreshold = 0.7;
 const _kDebounceDuration = Duration(milliseconds: 100);
