@@ -8,11 +8,11 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  bloc: ^7.2.1
+  bloc: ^8.0.2
   equatable: ^2.0.3
   flutter:
     sdk: flutter
-  flutter_bloc: ^7.3.3
+  flutter_bloc: ^8.0.1
   very_good_infinite_list:
     path: ../
 

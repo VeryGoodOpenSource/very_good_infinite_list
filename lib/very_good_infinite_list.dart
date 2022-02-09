@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// The type definition for the [InfiniteList.itemBuilder].
@@ -23,22 +22,22 @@ class InfiniteList extends StatefulWidget {
   /// {@macro infinite_list}
   const InfiniteList({
     Key? key,
+    required this.itemCount,
+    required this.onFetchData,
+    required this.itemBuilder,
     this.scrollController,
     this.physics,
     this.scrollExtentThreshold = 400.0,
     this.debounceDuration = const Duration(milliseconds: 100),
     this.reverse = false,
-    required this.itemCount,
     this.isLoading = false,
     this.hasError = false,
     this.hasReachedMax = false,
-    required this.onFetchData,
     this.padding,
     this.emptyBuilder,
     this.loadingBuilder,
     this.errorBuilder,
     this.separatorBuilder,
-    required this.itemBuilder,
   })  : assert(
           scrollExtentThreshold >= 0.0,
           'scrollExtentThreshold must be greater than or equal to 0.0',
@@ -316,7 +315,7 @@ class CallbackDebouncer {
 
   /// Calls the given [callback] after the given duration has passed.
   @visibleForTesting
-  void call(void Function() callback) {
+  void call(VoidCallback callback) {
     if (_delay == Duration.zero) {
       callback();
     } else {
