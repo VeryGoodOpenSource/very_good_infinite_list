@@ -44,7 +44,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
- var _items = <String>[];
+  var _items = <String>[];
   var _isLoading = false;
 
   void _fetchData() async {
