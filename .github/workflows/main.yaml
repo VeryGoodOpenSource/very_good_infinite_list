@@ -4,27 +4,7 @@ on: [pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install Flutter
-        uses: subosito/flutter-action@v1.5.3
-
-      - name: Install Dependencies
-        run: flutter packages get
-
-      - name: Format
-        run: flutter format --set-exit-if-changed .
-
-      - name: Analyze
-        run: flutter analyze lib test example
-
-      - name: Run tests
-        run: flutter test --no-pub --coverage --test-randomize-ordering-seed random
-
-      - name: Check Code Coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
-        with:
-          path: coverage/lcov.info
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
+    with:
+      flutter_channel: stable
+      flutter_version: 2.10.1
