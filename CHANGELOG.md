@@ -1,3 +1,8 @@
+## [0.4.1] - 05/17/22
+
+- feat: upgrade to Dart >=2.17.0 and Flutter >=3.0.0
+- docs: upgrade example to Flutter 3.0.0 and Very Good Analysis 3.0.0
+
 ## [0.4.0] - 04/07/21
 
 - BREAKING: refactor: remodel api to work declaratively
