@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 class AdvancedExample extends StatelessWidget {
-  const AdvancedExample({Key? key}) : super(key: key);
+  const AdvancedExample({super.key});
 
   static Route<void> route() {
     return MaterialPageRoute(
