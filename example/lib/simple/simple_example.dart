@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 class SimpleExample extends StatefulWidget {
-  const SimpleExample({Key? key}) : super(key: key);
+  const SimpleExample({super.key});
 
   static Route<void> route() {
     return MaterialPageRoute(
