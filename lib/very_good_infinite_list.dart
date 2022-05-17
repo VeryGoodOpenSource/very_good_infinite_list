@@ -179,7 +179,7 @@ class InfiniteListState extends State<InfiniteList> {
     super.initState();
     _debounce = CallbackDebouncer(widget.debounceDuration);
     _initScrollController();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _attemptFetch();
     });
   }
@@ -194,7 +194,7 @@ class InfiniteListState extends State<InfiniteList> {
 
     if (widget.itemCount != oldWidget.itemCount ||
         widget.hasReachedMax != oldWidget.hasReachedMax) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _attemptFetch();
       });
     }
