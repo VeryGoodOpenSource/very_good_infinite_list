@@ -319,10 +319,10 @@ void main() {
       String goldenPath(String fileName) => 'goldens/$fileName.png';
 
       testWidgets(
-        'loading indicator when scrolled vertically to bottom',
+        'renders successfully when scrolled vertically to bottom',
         tags: tags,
         (tester) async {
-          const path = 'loading_indicator_on_vertical_scroll';
+          const path = 'successful_vertical_scroll';
 
           const colors = [Colors.red, Colors.green, Colors.blue];
           final subject = InfiniteList(
