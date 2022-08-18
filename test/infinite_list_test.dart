@@ -342,7 +342,7 @@ void main() {
 
           await expectLater(
             find.byWidget(subject),
-            matchesGoldenFile(goldenPath('$path/frame0')),
+            matchesGoldenFile(goldenPath('$path/before_scroll')),
           );
 
           await tester.fling(
@@ -354,7 +354,7 @@ void main() {
           await tester.pump(const Duration(milliseconds: 16));
           await expectLater(
             find.byWidget(subject),
-            matchesGoldenFile(goldenPath('$path/frame1')),
+            matchesGoldenFile(goldenPath('$path/after_scroll')),
           );
         },
       );
