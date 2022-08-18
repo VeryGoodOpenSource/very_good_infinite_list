@@ -313,5 +313,52 @@ void main() {
         },
       );
     });
+
+    group('goldens', () {
+      const tags = 'golden';
+      String goldenPath(String fileName) => 'goldens/$fileName.png';
+
+      testWidgets(
+        'loading indicator when scrolled vertically to bottom',
+        tags: tags,
+        (tester) async {
+          const path = 'loading_indicator_on_vertical_scroll';
+
+          const colors = [Colors.red, Colors.green, Colors.blue];
+          final subject = InfiniteList(
+            onFetchData: emptyCallback,
+            isLoading: true,
+            itemCount: 30,
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Colors.pink),
+            ),
+          );
+          await tester.pumpApp(subject);
+          await tester.pumpAndSettle();
+
+          await expectLater(
+            find.byWidget(subject),
+            matchesGoldenFile(goldenPath('$path/frame0')),
+          );
+
+          await tester.fling(
+            find.byWidget(subject),
+            const Offset(0, -1000),
+            1000,
+          );
+
+          await tester.pump(const Duration(milliseconds: 16));
+          await expectLater(
+            find.byWidget(subject),
+            matchesGoldenFile(goldenPath('$path/frame1')),
+          );
+        },
+      );
+    });
   });
 }
