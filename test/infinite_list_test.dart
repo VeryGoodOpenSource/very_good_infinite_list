@@ -339,7 +339,6 @@ void main() {
             ),
           );
           await tester.pumpApp(subject);
-          await tester.pumpAndSettle();
 
           await expectLater(
             find.byWidget(subject),
