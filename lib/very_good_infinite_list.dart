@@ -21,7 +21,7 @@ typedef ItemBuilder = Widget Function(BuildContext context, int index);
 class InfiniteList extends StatefulWidget {
   /// {@macro infinite_list}
   const InfiniteList({
-    Key? key,
+    super.key,
     required this.itemCount,
     required this.onFetchData,
     required this.itemBuilder,
@@ -38,11 +38,10 @@ class InfiniteList extends StatefulWidget {
     this.loadingBuilder,
     this.errorBuilder,
     this.separatorBuilder,
-  })  : assert(
+  }) : assert(
           scrollExtentThreshold >= 0.0,
           'scrollExtentThreshold must be greater than or equal to 0.0',
-        ),
-        super(key: key);
+        );
 
   /// An optional [ScrollController] this [InfiniteList] will attach to.
   /// It's used to detect when the list has scrolled to the appropriate position
