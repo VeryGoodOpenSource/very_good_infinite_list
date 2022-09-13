@@ -1,7 +1,5 @@
-// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:very_good_infinite_list/src/infinite_list_binder.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 extension on WidgetTester {
@@ -21,57 +19,6 @@ extension on WidgetTester {
 void main() {
   group('InfiniteList', () {
     void emptyCallback() {}
-
-    testWidgets(
-      'disposes old scrollController when it is replaced',
-      (tester) async {
-        const key = Key('__test_target__');
-
-        final scrollController = ScrollController();
-
-        Future<void> rebuild() async {
-          await tester.tap(find.byKey(key));
-          await tester.pumpAndSettle();
-        }
-
-        var useExternalScrollController = true;
-
-        await tester.pumpApp(
-          StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                children: [
-                  TextButton(
-                    key: key,
-                    onPressed: () => setState(() {}),
-                    child: const Text('REBUILD'),
-                  ),
-                  Expanded(
-                    child: InfiniteList(
-                      key: const Key('__infinite_list__'),
-                      scrollController: !useExternalScrollController
-                          ? null
-                          : scrollController,
-                      itemCount: 1000,
-                      onFetchData: emptyCallback,
-                      itemBuilder: (_, i) => Text('$i'),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        );
-
-        useExternalScrollController = false;
-        await rebuild();
-
-        expect(
-          () => scrollController.hasListeners,
-          throwsFlutterError,
-        );
-      },
-    );
 
     testWidgets(
       'attempts to fetch new elements if rebuild occurs '
@@ -122,7 +69,7 @@ void main() {
     );
 
     testWidgets(
-      'renders ListView',
+      'renders CustomScrollView',
       (tester) async {
         await tester.pumpApp(
           InfiniteList(
@@ -132,12 +79,12 @@ void main() {
           ),
         );
 
-        expect(find.byType(ListView), findsOneWidget);
+        expect(find.byType(CustomScrollView), findsOneWidget);
       },
     );
 
     testWidgets(
-      'passes padding to internal ListView',
+      'passes padding to internal SliverPadding',
       (tester) async {
         const padding = EdgeInsets.all(16);
 
@@ -150,8 +97,35 @@ void main() {
           ),
         );
 
-        final listView = tester.widget<ListView>(find.byType(ListView));
-        expect(listView.padding, equals(padding));
+        final sliverPadding =
+            tester.widget<SliverPadding>(find.byType(SliverPadding));
+        expect(sliverPadding.padding, equals(padding));
+      },
+    );
+
+    testWidgets(
+      'uses media query padding when padding is omitted',
+      (tester) async {
+        const padding = EdgeInsets.all(40);
+
+        await tester.pumpApp(
+          Builder(builder: (context) {
+            final data = MediaQuery.of(context);
+            return MediaQuery(
+              data: data.copyWith(padding: padding),
+              child: InfiniteList(
+                padding: padding,
+                itemCount: 3,
+                onFetchData: emptyCallback,
+                itemBuilder: (_, i) => Text('$i'),
+              ),
+            );
+          }),
+        );
+
+        final sliverPadding =
+            tester.widget<SliverPadding>(find.byType(SliverPadding));
+        expect(sliverPadding.padding, equals(padding));
       },
     );
 

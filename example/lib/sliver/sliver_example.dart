@@ -43,7 +43,7 @@ class SliverExampleState extends State<SliverExample> {
       body: CustomScrollView(
         slivers: [
           const SliverAppBar(
-            expandedHeight: 400.0,
+            expandedHeight: 400,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: Text('Sliver Example'),

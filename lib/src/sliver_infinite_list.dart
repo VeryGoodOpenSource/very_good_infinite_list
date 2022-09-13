@@ -1,16 +1,27 @@
+import 'dart:async';
+
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:very_good_infinite_list/src/infinite_list_binder.dart';
-import 'package:very_good_infinite_list/very_good_infinite_list.dart';
+import 'package:very_good_infinite_list/src/defaults.dart';
+import 'package:very_good_infinite_list/src/infinite_list.dart';
 
+late ListView pans;
+
+/// The sliver version of [InfiniteList].
+///
+/// {@macro infinite_list}
+///
+/// As a infinite list, it is supposed to be the last sliver in the current
+/// [ScrollView]. Otherwise, re-fetching data will have an unintuitive behavior.
 class SliverInfiniteList extends StatelessWidget {
+  /// Constructs a [SliverInfiniteList].
   const SliverInfiniteList({
     super.key,
     required this.itemCount,
     required this.onFetchData,
     required this.itemBuilder,
-    this.scrollExtentThreshold = 400.0,
-    this.debounceDuration = const Duration(milliseconds: 100),
+    this.scrollExtentThreshold = defaultScrollExtentThreshold,
+    this.debounceDuration = defaultDebounceDuration,
     this.isLoading = false,
     this.hasError = false,
     this.hasReachedMax = false,
@@ -18,58 +29,73 @@ class SliverInfiniteList extends StatelessWidget {
     this.errorBuilder,
     this.separatorBuilder,
     this.emptyBuilder,
-  });
+  }) : assert(
+          scrollExtentThreshold >= 0.0,
+          'scrollExtentThreshold must be greater than or equal to 0.0',
+        );
 
+  /// {@macro scroll_extent_threshold}
   final double scrollExtentThreshold;
 
+  /// {@macro debounce_duration}
   final Duration debounceDuration;
 
+  /// {@macro item_count}
   final int itemCount;
 
+  /// {@macro is_loading}
   final bool isLoading;
 
+  /// {@macro has_error}
   final bool hasError;
 
+  /// {@macro has_reached_max}
   final bool hasReachedMax;
 
+  /// {@macro on_fetch_data}
   final VoidCallback onFetchData;
 
+  /// {@macro empty_builder}
+  final WidgetBuilder? emptyBuilder;
+
+  /// {@macro loading_builder}
   final WidgetBuilder? loadingBuilder;
 
+  /// {@macro error_builder}
   final WidgetBuilder? errorBuilder;
 
+  /// {@macro separator_builder}
   final WidgetBuilder? separatorBuilder;
 
+  /// {@macro item_builder}
   final ItemBuilder itemBuilder;
-
-  final WidgetBuilder? emptyBuilder;
 
   @override
   Widget build(BuildContext context) {
-    return SliverLayoutBuilder(builder: (context, constraints) {
-      return _SliverInfiniteListInternal(
-        itemCount: itemCount,
-        onFetchData: onFetchData,
-        itemBuilder: itemBuilder,
-        scrollExtentThreshold: scrollExtentThreshold,
-        debounceDuration: debounceDuration,
-        isLoading: isLoading,
-        hasError: hasError,
-        hasReachedMax: hasReachedMax,
-        precedingScrollExtent: constraints.precedingScrollExtent,
-        loadingBuilder: loadingBuilder,
-        errorBuilder: errorBuilder,
-        separatorBuilder: separatorBuilder,
-        emptyBuilder: emptyBuilder,
-      );
-    });
+    return SliverLayoutBuilder(
+      builder: (context, constraints) {
+        return _SliverInfiniteListInternal(
+          itemCount: itemCount,
+          onFetchData: onFetchData,
+          itemBuilder: itemBuilder,
+          scrollExtentThreshold: scrollExtentThreshold,
+          debounceDuration: debounceDuration,
+          isLoading: isLoading,
+          hasError: hasError,
+          hasReachedMax: hasReachedMax,
+          precedingScrollExtent: constraints.precedingScrollExtent,
+          loadingBuilder: loadingBuilder,
+          errorBuilder: errorBuilder,
+          separatorBuilder: separatorBuilder,
+          emptyBuilder: emptyBuilder,
+        );
+      },
+    );
   }
 }
 
-class _SliverInfiniteListInternal extends StatefulWidget
-    with InfiniteListWidget {
+class _SliverInfiniteListInternal extends StatefulWidget {
   const _SliverInfiniteListInternal({
-    super.key,
     required this.itemCount,
     required this.onFetchData,
     required this.itemBuilder,
@@ -85,27 +111,21 @@ class _SliverInfiniteListInternal extends StatefulWidget
     this.emptyBuilder,
   });
 
-  @override
   final double scrollExtentThreshold;
 
-  @override
   final Duration debounceDuration;
 
-  @override
   final int itemCount;
 
-  @override
   final bool isLoading;
 
-  @override
   final bool hasError;
 
-  @override
   final bool hasReachedMax;
 
-  @override
   final VoidCallback onFetchData;
 
+  /// See [SliverConstraints.precedingScrollExtent]
   final double precedingScrollExtent;
 
   final WidgetBuilder? loadingBuilder;
@@ -124,29 +144,93 @@ class _SliverInfiniteListInternal extends StatefulWidget
 }
 
 class _SliverInfiniteListInternalState
-    extends State<_SliverInfiniteListInternal> with InfiniteListStateBind {
-  @override
+    extends State<_SliverInfiniteListInternal> {
+  late final CallbackDebouncer debounce;
+
   ScrollPosition? scrollPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    debounce = CallbackDebouncer(widget.debounceDuration);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      attemptFetch();
+    });
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     detachFromPosition();
     scrollPosition = Scrollable.of(context)?.position;
     attachToPosition();
   }
 
-  WidgetBuilder get _loadingBuilder =>
+  @override
+  void didUpdateWidget(_SliverInfiniteListInternal oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.itemCount != oldWidget.itemCount ||
+        widget.hasReachedMax != oldWidget.hasReachedMax) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        attemptFetch();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    debounce.dispose();
+    detachFromPosition();
+  }
+
+  void attachToPosition() {
+    scrollPosition?.addListener(attemptFetch);
+  }
+
+  void detachFromPosition() {
+    scrollPosition?.removeListener(attemptFetch);
+  }
+
+  void attemptFetch() {
+    if (isAtEnd &&
+        !widget.hasReachedMax &&
+        !widget.isLoading &&
+        !widget.hasError) {
+      debounce(widget.onFetchData);
+    }
+  }
+
+  bool get isAtEnd {
+    if (widget.itemCount == 0) {
+      return true;
+    }
+
+    final scrollPosition = this.scrollPosition;
+    if (scrollPosition == null) {
+      return false;
+    }
+
+    // This considers the end of the scrollable content as the
+    // position to trigger a data fetch. It may cause unintuitive behaviors
+    // when there is any sliver after this one.
+    final maxScroll = scrollPosition.maxScrollExtent;
+
+    final currentScroll = scrollPosition.pixels - widget.precedingScrollExtent;
+    return currentScroll >= (maxScroll - widget.scrollExtentThreshold);
+  }
+
+  WidgetBuilder get loadingBuilder =>
       widget.loadingBuilder ?? defaultInfiniteListLoadingBuilder;
 
-  WidgetBuilder get _errorBuilder =>
+  WidgetBuilder get errorBuilder =>
       widget.errorBuilder ?? defaultInfiniteListErrorBuilder;
 
   @override
-  double get precedingScrollExtent => widget.precedingScrollExtent;
-
-  @override
   Widget build(BuildContext context) {
+    final hasItems = widget.itemCount != 0;
+
     final showEmpty = !widget.isLoading &&
         widget.itemCount == 0 &&
         widget.emptyBuilder != null;
@@ -165,9 +249,9 @@ class _SliverInfiniteListInternalState
         (context, index) {
           if (index == lastItemIndex && showBottomWidget) {
             if (widget.hasError) {
-              return _errorBuilder(context);
+              return errorBuilder(context);
             } else if (widget.isLoading) {
-              return _loadingBuilder(context);
+              return loadingBuilder(context);
             } else {
               return widget.emptyBuilder!(context);
             }
@@ -182,5 +266,36 @@ class _SliverInfiniteListInternalState
         },
       ),
     );
+  }
+}
+
+/// {@template callback_debouncer}
+/// A model used for debouncing callbacks.
+///
+/// Is only used internally and should not be used explicitly.
+/// {@endtemplate}
+@visibleForTesting
+class CallbackDebouncer {
+  /// {@macro callback_debouncer}
+  CallbackDebouncer(this._delay);
+
+  final Duration _delay;
+  Timer? _timer;
+
+  /// Calls the given [callback] after the given duration has passed.
+  @visibleForTesting
+  void call(VoidCallback callback) {
+    if (_delay == Duration.zero) {
+      callback();
+    } else {
+      _timer?.cancel();
+      _timer = Timer(_delay, callback);
+    }
+  }
+
+  /// Stops any running timers and disposes this instance.
+  @visibleForTesting
+  void dispose() {
+    _timer?.cancel();
   }
 }
