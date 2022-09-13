@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:very_good_infinite_list/src/infinite_list_binder.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 extension on WidgetTester {

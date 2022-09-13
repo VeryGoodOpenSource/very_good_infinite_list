@@ -1,5 +1,6 @@
 import 'package:example/advanced/advanced_example.dart';
 import 'package:example/simple/simple_example.dart';
+import 'package:example/sliver/sliver_example.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -45,6 +46,18 @@ class Example extends StatelessWidget {
             subtitle: const Text(
               'An advanced example that uses an Infinite List '
               'in combination with a Cubit from the Bloc package.',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+          ),
+          const Divider(),
+          ListTile(
+            isThreeLine: true,
+            onTap: () {
+              Navigator.of(context).push(SliverExample.route());
+            },
+            title: const Text('Sliver Example'),
+            subtitle: const Text(
+              'An example in a sliver',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),
