@@ -409,7 +409,7 @@ void main() {
       testWidgets(
         'renders successfully when scrolled horizontally to the end',
         tags: tags,
-            (tester) async {
+        (tester) async {
           const path = 'successful_horizontal_scroll';
 
           const colors = [Colors.red, Colors.green, Colors.blue];
