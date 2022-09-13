@@ -194,25 +194,54 @@ class InfiniteList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget sliver = SliverInfiniteList(
-      itemCount: itemCount,
-      onFetchData: onFetchData,
-      itemBuilder: itemBuilder,
-      scrollExtentThreshold: scrollExtentThreshold,
-      debounceDuration: debounceDuration,
-      isLoading: isLoading,
-      hasError: hasError,
-      hasReachedMax: hasReachedMax,
-      loadingBuilder: loadingBuilder,
-      errorBuilder: errorBuilder,
-      separatorBuilder: separatorBuilder,
-      emptyBuilder: emptyBuilder,
+    return CustomScrollView(
+      scrollDirection: scrollDirection,
+      controller: scrollController,
+      physics: physics,
+      reverse: reverse,
+      slivers: [
+        _ContextualSliverPadding(
+          padding: padding,
+          scrollDirection: scrollDirection,
+          sliver: SliverInfiniteList(
+            itemCount: itemCount,
+            onFetchData: onFetchData,
+            itemBuilder: itemBuilder,
+            scrollExtentThreshold: scrollExtentThreshold,
+            debounceDuration: debounceDuration,
+            isLoading: isLoading,
+            hasError: hasError,
+            hasReachedMax: hasReachedMax,
+            loadingBuilder: loadingBuilder,
+            errorBuilder: errorBuilder,
+            separatorBuilder: separatorBuilder,
+            emptyBuilder: emptyBuilder,
+          ),
+        )
+      ],
     );
+  }
+}
 
-    // To work just as a plain ListView, It should automatically apply a
-    // media query padding if the passing options is omitted or null.
+/// To work just as a plain ListView, It should automatically apply a
+/// media query padding if the passing options is omitted or null.
+class _ContextualSliverPadding extends StatelessWidget {
+  const _ContextualSliverPadding({
+    required this.scrollDirection,
+    required this.sliver,
+    this.padding,
+  });
+
+  final EdgeInsets? padding;
+  final Axis scrollDirection;
+  final Widget sliver;
+
+  @override
+  Widget build(BuildContext context) {
     EdgeInsetsGeometry? effectivePadding = padding;
     final mediaQuery = MediaQuery.maybeOf(context);
+
+    var sliver = this.sliver;
     if (padding == null) {
       if (mediaQuery != null) {
         // Automatically pad sliver with padding from MediaQuery.
@@ -239,13 +268,6 @@ class InfiniteList extends StatelessWidget {
     if (effectivePadding != null) {
       sliver = SliverPadding(padding: effectivePadding, sliver: sliver);
     }
-
-    return CustomScrollView(
-      scrollDirection: scrollDirection,
-      controller: scrollController,
-      physics: physics,
-      reverse: reverse,
-      slivers: [sliver],
-    );
+    return sliver;
   }
 }
