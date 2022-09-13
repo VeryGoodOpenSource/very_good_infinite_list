@@ -65,6 +65,11 @@ void main() {
         await rebuild();
 
         expect(onFetchDataCalls, equals(1));
+
+        hasReachedMax = true;
+        await rebuild();
+
+        expect(onFetchDataCalls, equals(1));
       },
     );
 
@@ -109,18 +114,20 @@ void main() {
         const padding = EdgeInsets.all(40);
 
         await tester.pumpApp(
-          Builder(builder: (context) {
-            final data = MediaQuery.of(context);
-            return MediaQuery(
-              data: data.copyWith(padding: padding),
-              child: InfiniteList(
-                padding: padding,
-                itemCount: 3,
-                onFetchData: emptyCallback,
-                itemBuilder: (_, i) => Text('$i'),
-              ),
-            );
-          }),
+          Builder(
+            builder: (context) {
+              final data = MediaQuery.of(context);
+              return MediaQuery(
+                data: data.copyWith(padding: padding),
+                child: InfiniteList(
+                  padding: padding,
+                  itemCount: 3,
+                  onFetchData: emptyCallback,
+                  itemBuilder: (_, i) => Text('$i'),
+                ),
+              );
+            },
+          ),
         );
 
         final sliverPadding =
@@ -289,12 +296,77 @@ void main() {
       );
     });
 
+    group('transitionary properties', () {
+      testWidgets('scrollDirection', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+            scrollDirection: Axis.horizontal,
+          ),
+        );
+
+        final customScrollView =
+            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        expect(customScrollView.scrollDirection, equals(Axis.horizontal));
+      });
+
+      testWidgets('scrollController', (tester) async {
+        final scrollController = ScrollController();
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+            scrollController: scrollController,
+          ),
+        );
+
+        final customScrollView =
+            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        expect(customScrollView.controller, scrollController);
+      });
+
+      testWidgets('physics', (tester) async {
+        const physics = ScrollPhysics();
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+            physics: physics,
+          ),
+        );
+
+        final customScrollView =
+            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        expect(customScrollView.physics, physics);
+      });
+
+      testWidgets('reverse', (tester) async {
+        const reverse = true;
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+            reverse: reverse,
+          ),
+        );
+
+        final customScrollView =
+            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        expect(customScrollView.reverse, reverse);
+      });
+    });
+
     group('goldens', () {
       const tags = 'golden';
       String goldenPath(String fileName) => 'goldens/$fileName.png';
 
       testWidgets(
-        'renders successfully when scrolled vertically to bottom',
+        'renders successfully when scrolled vertically to the end',
         tags: tags,
         (tester) async {
           const path = 'successful_vertical_scroll';
@@ -323,6 +395,48 @@ void main() {
           await tester.fling(
             find.byWidget(subject),
             const Offset(0, -1000),
+            1000,
+          );
+
+          await tester.pump(const Duration(milliseconds: 16));
+          await expectLater(
+            find.byWidget(subject),
+            matchesGoldenFile(goldenPath('$path/after_scroll')),
+          );
+        },
+      );
+
+      testWidgets(
+        'renders successfully when scrolled horizontally to the end',
+        tags: tags,
+            (tester) async {
+          const path = 'successful_horizontal_scroll';
+
+          const colors = [Colors.red, Colors.green, Colors.blue];
+          final subject = InfiniteList(
+            onFetchData: emptyCallback,
+            isLoading: true,
+            itemCount: 30,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Colors.pink),
+            ),
+          );
+          await tester.pumpApp(subject);
+
+          await expectLater(
+            find.byWidget(subject),
+            matchesGoldenFile(goldenPath('$path/before_scroll')),
+          );
+
+          await tester.fling(
+            find.byWidget(subject),
+            const Offset(-1000, 0),
             1000,
           );
 

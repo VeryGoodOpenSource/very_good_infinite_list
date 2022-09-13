@@ -5,8 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:very_good_infinite_list/src/defaults.dart';
 import 'package:very_good_infinite_list/src/infinite_list.dart';
 
-late ListView pans;
-
 /// The sliver version of [InfiniteList].
 ///
 /// {@macro infinite_list}
@@ -283,7 +281,6 @@ class CallbackDebouncer {
   Timer? _timer;
 
   /// Calls the given [callback] after the given duration has passed.
-  @visibleForTesting
   void call(VoidCallback callback) {
     if (_delay == Duration.zero) {
       callback();
@@ -294,7 +291,6 @@ class CallbackDebouncer {
   }
 
   /// Stops any running timers and disposes this instance.
-  @visibleForTesting
   void dispose() {
     _timer?.cancel();
   }
