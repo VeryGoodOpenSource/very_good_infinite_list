@@ -160,13 +160,15 @@ class InfiniteList extends StatefulWidget {
   final ItemBuilder itemBuilder;
 
   @override
-  _InfiniteListState createState() => _InfiniteListState();
+  InfiniteListState createState() => InfiniteListState();
 }
 
 /// The state of an [InfiniteList].
 ///
 /// Is only used for internal purposes. Do not use this class directly.
-class _InfiniteListState extends State<InfiniteList> {
+@protected
+@visibleForTesting
+class InfiniteListState extends State<InfiniteList> {
   late final CallbackDebouncer _debounce;
 
   ScrollController? _scrollController;
