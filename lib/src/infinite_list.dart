@@ -192,9 +192,8 @@ class InfiniteList extends StatelessWidget {
   /// {@endtemplate}
   final ItemBuilder itemBuilder;
 
-  // To work just as a plain ListView, It should automatically apply a
-  // media query padding if the passing options is omitted or null.
-  Widget _buildSliver(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     Widget sliver = SliverInfiniteList(
       itemCount: itemCount,
       onFetchData: onFetchData,
@@ -210,14 +209,16 @@ class InfiniteList extends StatelessWidget {
       emptyBuilder: emptyBuilder,
     );
 
+    // To work just as a plain ListView, It should automatically apply a
+    // media query padding if the passing options is omitted or null.
     EdgeInsetsGeometry? effectivePadding = padding;
+    final mediaQuery = MediaQuery.maybeOf(context);
     if (padding == null) {
-      final mediaQuery = MediaQuery.maybeOf(context);
       if (mediaQuery != null) {
         // Automatically pad sliver with padding from MediaQuery.
-        final mediaQueryHorizontalPadding =
+        late final mediaQueryHorizontalPadding =
             mediaQuery.padding.copyWith(top: 0, bottom: 0);
-        final mediaQueryVerticalPadding =
+        late final mediaQueryVerticalPadding =
             mediaQuery.padding.copyWith(left: 0, right: 0);
         // Consume the main axis padding with SliverPadding.
         effectivePadding = scrollDirection == Axis.vertical
@@ -238,17 +239,13 @@ class InfiniteList extends StatelessWidget {
     if (effectivePadding != null) {
       sliver = SliverPadding(padding: effectivePadding, sliver: sliver);
     }
-    return sliver;
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return CustomScrollView(
       scrollDirection: scrollDirection,
       controller: scrollController,
       physics: physics,
       reverse: reverse,
-      slivers: [_buildSliver(context)],
+      slivers: [sliver],
     );
   }
 }
