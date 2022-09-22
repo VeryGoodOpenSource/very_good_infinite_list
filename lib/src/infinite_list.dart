@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:very_good_infinite_list/src/callback_debouncer.dart';
-
-/// The type definition for the [InfiniteList.itemBuilder].
-typedef ItemBuilder = Widget Function(BuildContext context, int index);
+import 'package:very_good_infinite_list/src/defaults.dart';
+import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 
 /// {@macro infinite_list}
 /// A widget that makes it easy to declaratively load and display paginated data
@@ -18,7 +15,10 @@ typedef ItemBuilder = Widget Function(BuildContext context, int index);
 /// The [itemCount], [hasReachedMax], [onFetchData] and [itemBuilder] must be
 /// provided and cannot be `null`.
 /// {@endtemplate}
-class InfiniteList extends StatefulWidget {
+///
+/// See also:
+/// - [SliverInfiniteList]. The sliver version of this widget.
+class InfiniteList extends StatelessWidget {
   /// {@macro infinite_list}
   const InfiniteList({
     super.key,
@@ -26,9 +26,10 @@ class InfiniteList extends StatefulWidget {
     required this.onFetchData,
     required this.itemBuilder,
     this.scrollController,
+    this.scrollDirection = Axis.vertical,
     this.physics,
-    this.scrollExtentThreshold = 400.0,
-    this.debounceDuration = const Duration(milliseconds: 100),
+    this.scrollExtentThreshold = defaultScrollExtentThreshold,
+    this.debounceDuration = defaultDebounceDuration,
     this.reverse = false,
     this.isLoading = false,
     this.hasError = false,
@@ -43,19 +44,23 @@ class InfiniteList extends StatefulWidget {
           'scrollExtentThreshold must be greater than or equal to 0.0',
         );
 
-  /// An optional [ScrollController] this [InfiniteList] will attach to.
-  /// It's used to detect when the list has scrolled to the appropriate position
-  /// to call [onFetchData].
-  ///
-  /// Is optional and mostly used only for testing. If set to `null`, an
-  /// internal [ScrollController] is used instead.
+  /// {@template scroll_controller}
+  /// An optional [ScrollController] to be used by the internal [ScrollView].
+  /// {@endtemplate}
   final ScrollController? scrollController;
 
-  /// An optional [ScrollPhysics] this [InfiniteList] will use.
-  ///
-  /// If set to `null`, the default [ScrollPhysics] will be used instead.
+  /// {@template scroll_direction}
+  /// An optional [Axis] to be used by the internal [ScrollView] that defines
+  /// the axis of scroll.
+  /// {@endtemplate}
+  final Axis scrollDirection;
+
+  /// {@template physics}
+  /// An optional [ScrollPhysics] to be used by the internal [ScrollView].
+  /// {@endtemplate}
   final ScrollPhysics? physics;
 
+  /// {@template scroll_extent_threshold}
   /// The offset, in pixels, that the [scrollController] must be scrolled over
   /// to trigger [onFetchData].
   ///
@@ -66,50 +71,64 @@ class InfiniteList extends StatefulWidget {
   /// be called when the list is scrolled `400.0` pixels away from the bottom
   /// (or the top if [reverse] is `true`).
   ///
-  /// This value must be `0.0` or greater, is set to `400.0` by default and
-  /// cannot be `null`.
+  /// This value must be `0.0` or greater, is set to
+  /// [defaultScrollExtentThreshold] by default and cannot be `null`.
+  /// {@endtemplate}
   final double scrollExtentThreshold;
 
+  /// {@template debounce_duration}
   /// The duration with which calls to [onFetchData] will be debounced.
   ///
-  /// Is set to a duration of 100 milliseconds by default and cannot be `null`.
+  /// Is set to [defaultDebounceDuration] by default and cannot be `null`.
+  /// {@endtemplate}
   final Duration debounceDuration;
 
+  /// {@template reverse}
   /// Indicates if the list should be reversed.
   ///
   /// If set to `true`, the list of items, [loadingBuilder] and [errorBuilder]
   /// will be rendered from bottom to top.
+  /// {@endtemplate}
   final bool reverse;
 
+  /// {@template item_count}
   /// The amount of items that need to be rendered by the [itemBuilder].
   ///
   /// Is required and cannot be `null`.
+  /// {@endtemplate}
   final int itemCount;
 
+  /// {@template is_loading}
   /// Indicates if new items are currently being loaded.
   ///
   /// While set to `true`, the [onFetchData] callback will not be triggered
   /// and the [loadingBuilder] will be rendered.
   ///
   /// Is set to `false` by default and cannot be `null`.
+  /// {@endtemplate}
   final bool isLoading;
 
+  /// {@template has_error}
   /// Indicates if an error has occurred.
   ///
   /// While set to `true`, the [onFetchData] callback will not be triggered
   /// and the [errorBuilder] will be rendered.
   ///
   /// Is set to `false` by default and cannot be `null`.
+  /// {@endtemplate}
   final bool hasError;
 
+  /// {@template has_reached_max}
   /// Indicates if the end of the data source has been reached and no more
   /// data can be fetched.
   ///
   /// While set to `true`, the [onFetchData] callback will not be triggered.
   ///
   /// Is set to `false` by default and cannot be `null`.
+  /// {@endtemplate}
   final bool hasReachedMax;
 
+  /// {@template on_fetch_data}
   /// The callback method that's called whenever the list is scrolled to the end
   /// (meaning the top when [reverse] is `true`, or the bottom otherwise).
   ///
@@ -121,30 +140,38 @@ class InfiniteList extends StatefulWidget {
   /// [debounceDuration].
   ///
   /// Is required and cannot be `null`.
+  /// {@endtemplate}
   final VoidCallback onFetchData;
 
+  /// {@template padding}
   /// The amount of space by which to inset the list of items.
   ///
   /// Is optional and can be `null`.
+  /// {@endtemplate}
   final EdgeInsets? padding;
 
+  /// {@template empty_builder}
   /// An optional builder that's shown when the list of items is empty.
   ///
   /// If `null`, nothing is shown.
+  /// {@endtemplate}
   final WidgetBuilder? emptyBuilder;
 
+  /// {@template loading_builder}
   /// An optional builder that's shown at the end of the list when [isLoading]
   /// is `true`.
   ///
-  /// If `null`, a default builder is used that renders a centered
-  /// [CircularProgressIndicator].
+  /// Defaults to [defaultInfiniteListLoadingBuilder].
+  /// {@endtemplate}
   final WidgetBuilder? loadingBuilder;
 
+  /// {@template error_builder}
   /// An optional builder that's shown when [hasError] is not `null`.
   ///
-  /// If `null`, a default builder is used that renders the text `"Error"`.
+  /// Defaults to [defaultInfiniteListErrorBuilder].
   final WidgetBuilder? errorBuilder;
 
+  /// {@template separator_builder}
   /// An optional builder that, when provided, is used to show a widget in
   /// between every pair of items.
   ///
@@ -152,147 +179,92 @@ class InfiniteList extends StatefulWidget {
   /// a [Divider] between every tile.
   ///
   /// Is optional and can be `null`.
+  /// {@endtemplate}
   final WidgetBuilder? separatorBuilder;
 
+  /// {@template item_builder}
   /// The builder used to build a widget for every index of the `itemCount`.
   ///
   /// Is required and cannot be `null`.
+  /// {@endtemplate}
   final ItemBuilder itemBuilder;
 
   @override
-  State<InfiniteList> createState() => _InfiniteListState();
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      scrollDirection: scrollDirection,
+      controller: scrollController,
+      physics: physics,
+      reverse: reverse,
+      slivers: [
+        _ContextualSliverPadding(
+          padding: padding,
+          scrollDirection: scrollDirection,
+          sliver: SliverInfiniteList(
+            itemCount: itemCount,
+            onFetchData: onFetchData,
+            itemBuilder: itemBuilder,
+            scrollExtentThreshold: scrollExtentThreshold,
+            debounceDuration: debounceDuration,
+            isLoading: isLoading,
+            hasError: hasError,
+            hasReachedMax: hasReachedMax,
+            loadingBuilder: loadingBuilder,
+            errorBuilder: errorBuilder,
+            separatorBuilder: separatorBuilder,
+            emptyBuilder: emptyBuilder,
+          ),
+        )
+      ],
+    );
+  }
 }
 
-/// The state of an [InfiniteList].
-///
-/// Is only used for internal purposes. Do not use this class directly.
-class _InfiniteListState extends State<InfiniteList> {
-  late final CallbackDebouncer _debounce;
+/// To work just as a plain ListView, It should automatically apply a
+/// media query padding if the passing options is omitted or null.
+class _ContextualSliverPadding extends StatelessWidget {
+  const _ContextualSliverPadding({
+    required this.scrollDirection,
+    required this.sliver,
+    this.padding,
+  });
 
-  ScrollController? _scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    _debounce = CallbackDebouncer(widget.debounceDuration);
-    _initScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _attemptFetch();
-    });
-  }
-
-  @override
-  void didUpdateWidget(InfiniteList oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.scrollController != oldWidget.scrollController) {
-      _initScrollController();
-    }
-
-    if (widget.itemCount != oldWidget.itemCount ||
-        widget.hasReachedMax != oldWidget.hasReachedMax) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _attemptFetch();
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController?.removeListener(_attemptFetch);
-    if (widget.scrollController == null) {
-      _scrollController?.dispose();
-    }
-    _debounce.dispose();
-    super.dispose();
-  }
-
-  void _initScrollController() {
-    _scrollController?.removeListener(_attemptFetch);
-    _scrollController?.dispose();
-
-    _scrollController = (widget.scrollController ?? ScrollController())
-      ..addListener(_attemptFetch);
-  }
-
-  void _attemptFetch() {
-    if (_isAtEnd &&
-        !widget.hasReachedMax &&
-        !widget.isLoading &&
-        !widget.hasError) {
-      _debounce(widget.onFetchData);
-    }
-  }
-
-  bool get _isAtEnd {
-    if (widget.itemCount == 0) {
-      return true;
-    }
-
-    if (!_scrollController!.hasClients) {
-      return false;
-    }
-
-    final maxScroll = _scrollController!.position.maxScrollExtent;
-    final currentScroll = _scrollController!.offset;
-    return currentScroll >= (maxScroll - widget.scrollExtentThreshold);
-  }
-
-  WidgetBuilder get _loadingBuilder =>
-      widget.loadingBuilder ??
-      (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      };
-
-  WidgetBuilder get _errorBuilder =>
-      widget.errorBuilder ??
-      (context) {
-        return const Center(
-          child: Text('Error'),
-        );
-      };
+  final EdgeInsets? padding;
+  final Axis scrollDirection;
+  final Widget sliver;
 
   @override
   Widget build(BuildContext context) {
-    final hasItems = widget.itemCount != 0;
+    EdgeInsetsGeometry? effectivePadding = padding;
+    final mediaQuery = MediaQuery.maybeOf(context);
 
-    final showEmpty = !widget.isLoading &&
-        widget.itemCount == 0 &&
-        widget.emptyBuilder != null;
-    final showBottomWidget = showEmpty || widget.isLoading || widget.hasError;
-    final showSeparator = widget.separatorBuilder != null;
-    final separatorCount = !showSeparator ? 0 : widget.itemCount - 1;
+    var sliver = this.sliver;
+    if (padding == null) {
+      if (mediaQuery != null) {
+        // Automatically pad sliver with padding from MediaQuery.
+        late final mediaQueryHorizontalPadding =
+            mediaQuery.padding.copyWith(top: 0, bottom: 0);
+        late final mediaQueryVerticalPadding =
+            mediaQuery.padding.copyWith(left: 0, right: 0);
+        // Consume the main axis padding with SliverPadding.
+        effectivePadding = scrollDirection == Axis.vertical
+            ? mediaQueryVerticalPadding
+            : mediaQueryHorizontalPadding;
+        // Leave behind the cross axis padding.
+        sliver = MediaQuery(
+          data: mediaQuery.copyWith(
+            padding: scrollDirection == Axis.vertical
+                ? mediaQueryHorizontalPadding
+                : mediaQueryVerticalPadding,
+          ),
+          child: sliver,
+        );
+      }
+    }
 
-    final itemCount = (!hasItems ? 0 : widget.itemCount + separatorCount) +
-        (showBottomWidget ? 1 : 0);
-    final lastItemIndex = itemCount - 1;
-
-    return ListView.builder(
-      controller: _scrollController,
-      physics: widget.physics,
-      reverse: widget.reverse,
-      padding: widget.padding,
-      itemCount: itemCount,
-      itemBuilder: (context, index) {
-        if (index == lastItemIndex && showBottomWidget) {
-          if (widget.hasError) {
-            return _errorBuilder(context);
-          } else if (widget.isLoading) {
-            return _loadingBuilder(context);
-          } else {
-            return widget.emptyBuilder!(context);
-          }
-        } else {
-          if (showSeparator && index.isOdd) {
-            return widget.separatorBuilder!(context);
-          } else {
-            final itemIndex = !showSeparator ? index : (index / 2).floor();
-            return widget.itemBuilder(context, itemIndex);
-          }
-        }
-      },
-    );
+    if (effectivePadding != null) {
+      sliver = SliverPadding(padding: effectivePadding, sliver: sliver);
+    }
+    return sliver;
   }
 }
