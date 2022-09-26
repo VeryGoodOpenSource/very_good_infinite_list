@@ -1,3 +1,9 @@
+## [0.5.0] - 09/26/22
+
+- feat: add sliver infinite list
+- deps: upgrade to very_good_analysis 3.1.0
+- deps: upgrade to Dart >=2.18.0
+
 ## [0.4.1] - 05/17/22
 
 - feat: upgrade to Dart >=2.17.0 and Flutter >=3.0.0
