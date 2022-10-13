@@ -3,13 +3,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 
 extension on WidgetTester {
-  Future<void> pumpSlivers(List<Widget> slivers) async {
+  Future<void> pumpSlivers(
+    List<Widget> slivers, {
+    double? cacheExtent,
+  }) async {
     await pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: SizedBox(
             height: 500,
             child: CustomScrollView(
+              cacheExtent: cacheExtent,
               slivers: slivers,
             ),
           ),
@@ -28,16 +32,16 @@ void main() {
         var onFetchDataCalls = 0;
 
         await tester.pumpSlivers(
+          cacheExtent: 0,
           [
             StatefulBuilder(
               builder: (context, setState) {
                 return SliverInfiniteList(
                   itemCount: itemCount,
                   debounceDuration: Duration.zero,
-                  hasReachedMax: itemCount == 12,
                   onFetchData: () {
                     setState(() {
-                      itemCount += 3;
+                      itemCount += 8;
                       onFetchDataCalls++;
                     });
                   },
@@ -51,15 +55,15 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        expect(onFetchDataCalls, equals(4));
+        expect(onFetchDataCalls, equals(5));
       });
     });
     group('consider preceding slivers', () {
       testWidgets('on mount', (tester) async {
         var itemCount = 0;
         var onFetchDataCalls = 0;
-
         await tester.pumpSlivers(
+          cacheExtent: 0,
           [
             const SliverAppBar(
               expandedHeight: 500,
@@ -73,10 +77,9 @@ void main() {
                 return SliverInfiniteList(
                   itemCount: itemCount,
                   debounceDuration: Duration.zero,
-                  hasReachedMax: itemCount == 12,
                   onFetchData: () {
                     setState(() {
-                      itemCount += 3;
+                      itemCount += 8;
                       onFetchDataCalls++;
                     });
                   },
