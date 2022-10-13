@@ -72,18 +72,14 @@ class _SliverInfiniteListState extends State<SliverInfiniteList> {
   void initState() {
     super.initState();
     debounce = CallbackDebouncer(widget.debounceDuration);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      attemptFetch();
-    });
+    attemptFetch();
   }
 
   @override
   void didUpdateWidget(SliverInfiniteList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.hasReachedMax != oldWidget.hasReachedMax) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        attemptFetch();
-      });
+    if (!widget.hasReachedMax && oldWidget.hasReachedMax) {
+      attemptFetch();
     }
   }
 
@@ -95,16 +91,16 @@ class _SliverInfiniteListState extends State<SliverInfiniteList> {
 
   void attemptFetch() {
     if (!widget.hasReachedMax && !widget.isLoading && !widget.hasError) {
-      debounce(widget.onFetchData);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        debounce(widget.onFetchData);
+      });
     }
   }
 
   void onBuiltLast(int lastItemIndex) {
     if (_lastFetchedIndex != lastItemIndex) {
       _lastFetchedIndex = lastItemIndex;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        attemptFetch();
-      });
+      attemptFetch();
     }
   }
 
