@@ -1,3 +1,7 @@
+## [0.6.0] - 10/14/22
+
+- fix: remove need for an extra pull
+ 
 ## [0.5.0] - 09/26/22
 
 - feat: add sliver infinite list
