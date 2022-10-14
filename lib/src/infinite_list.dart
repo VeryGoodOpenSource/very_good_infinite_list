@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:very_good_infinite_list/src/defaults.dart';
 import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 
@@ -28,7 +29,7 @@ class InfiniteList extends StatelessWidget {
     this.scrollController,
     this.scrollDirection = Axis.vertical,
     this.physics,
-    this.scrollExtentThreshold = defaultScrollExtentThreshold,
+    this.cacheExtent,
     this.debounceDuration = defaultDebounceDuration,
     this.reverse = false,
     this.isLoading = false,
@@ -39,10 +40,7 @@ class InfiniteList extends StatelessWidget {
     this.loadingBuilder,
     this.errorBuilder,
     this.separatorBuilder,
-  }) : assert(
-          scrollExtentThreshold >= 0.0,
-          'scrollExtentThreshold must be greater than or equal to 0.0',
-        );
+  });
 
   /// {@template scroll_controller}
   /// An optional [ScrollController] to be used by the internal [ScrollView].
@@ -59,22 +57,6 @@ class InfiniteList extends StatelessWidget {
   /// An optional [ScrollPhysics] to be used by the internal [ScrollView].
   /// {@endtemplate}
   final ScrollPhysics? physics;
-
-  /// {@template scroll_extent_threshold}
-  /// The offset, in pixels, that the [scrollController] must be scrolled over
-  /// to trigger [onFetchData].
-  ///
-  /// This is useful for fetching data _before_ the user has scrolled all the
-  /// way to the end of the list, so the fetching mechanism is more well hidden.
-  ///
-  /// For example, if this is set to `400.0` (the default), [onFetchData] will
-  /// be called when the list is scrolled `400.0` pixels away from the bottom
-  /// (or the top if [reverse] is `true`).
-  ///
-  /// This value must be `0.0` or greater, is set to
-  /// [defaultScrollExtentThreshold] by default and cannot be `null`.
-  /// {@endtemplate}
-  final double scrollExtentThreshold;
 
   /// {@template debounce_duration}
   /// The duration with which calls to [onFetchData] will be debounced.
@@ -135,13 +117,16 @@ class InfiniteList extends StatelessWidget {
   /// In normal operation, this method should trigger new data to be fetched and
   /// [isLoading] to be set to `true`.
   ///
-  /// Exactly when this is called depends on the [scrollExtentThreshold].
+  /// Exactly when this is called depends on the [cacheExtent].
   /// Additionally, every call to this will be debounced by the provided
   /// [debounceDuration].
   ///
   /// Is required and cannot be `null`.
   /// {@endtemplate}
   final VoidCallback onFetchData;
+
+  /// See [RenderViewportBase.cacheExtent]
+  final double? cacheExtent;
 
   /// {@template padding}
   /// The amount of space by which to inset the list of items.
@@ -193,9 +178,10 @@ class InfiniteList extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       scrollDirection: scrollDirection,
+      reverse: reverse,
       controller: scrollController,
       physics: physics,
-      reverse: reverse,
+      cacheExtent: cacheExtent,
       slivers: [
         _ContextualSliverPadding(
           padding: padding,
@@ -204,7 +190,6 @@ class InfiniteList extends StatelessWidget {
             itemCount: itemCount,
             onFetchData: onFetchData,
             itemBuilder: itemBuilder,
-            scrollExtentThreshold: scrollExtentThreshold,
             debounceDuration: debounceDuration,
             isLoading: isLoading,
             hasError: hasError,

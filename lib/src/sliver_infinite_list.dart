@@ -1,4 +1,3 @@
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:very_good_infinite_list/src/callback_debouncer.dart';
 import 'package:very_good_infinite_list/src/defaults.dart';
@@ -10,14 +9,13 @@ import 'package:very_good_infinite_list/src/infinite_list.dart';
 ///
 /// As a infinite list, it is supposed to be the last sliver in the current
 /// [ScrollView]. Otherwise, re-fetching data will have an unintuitive behavior.
-class SliverInfiniteList extends StatelessWidget {
+class SliverInfiniteList extends StatefulWidget {
   /// Constructs a [SliverInfiniteList].
   const SliverInfiniteList({
     super.key,
     required this.itemCount,
     required this.onFetchData,
     required this.itemBuilder,
-    this.scrollExtentThreshold = defaultScrollExtentThreshold,
     this.debounceDuration = defaultDebounceDuration,
     this.isLoading = false,
     this.hasError = false,
@@ -26,13 +24,7 @@ class SliverInfiniteList extends StatelessWidget {
     this.errorBuilder,
     this.separatorBuilder,
     this.emptyBuilder,
-  }) : assert(
-          scrollExtentThreshold >= 0.0,
-          'scrollExtentThreshold must be greater than or equal to 0.0',
-        );
-
-  /// {@macro scroll_extent_threshold}
-  final double scrollExtentThreshold;
+  });
 
   /// {@macro debounce_duration}
   final Duration debounceDuration;
@@ -68,110 +60,26 @@ class SliverInfiniteList extends StatelessWidget {
   final ItemBuilder itemBuilder;
 
   @override
-  Widget build(BuildContext context) {
-    return SliverLayoutBuilder(
-      builder: (context, constraints) {
-        return _SliverInfiniteListInternal(
-          itemCount: itemCount,
-          onFetchData: onFetchData,
-          itemBuilder: itemBuilder,
-          scrollExtentThreshold: scrollExtentThreshold,
-          debounceDuration: debounceDuration,
-          isLoading: isLoading,
-          hasError: hasError,
-          hasReachedMax: hasReachedMax,
-          precedingScrollExtent: constraints.precedingScrollExtent,
-          loadingBuilder: loadingBuilder,
-          errorBuilder: errorBuilder,
-          separatorBuilder: separatorBuilder,
-          emptyBuilder: emptyBuilder,
-        );
-      },
-    );
-  }
+  State<SliverInfiniteList> createState() => _SliverInfiniteListState();
 }
 
-class _SliverInfiniteListInternal extends StatefulWidget {
-  const _SliverInfiniteListInternal({
-    required this.itemCount,
-    required this.onFetchData,
-    required this.itemBuilder,
-    required this.scrollExtentThreshold,
-    required this.debounceDuration,
-    required this.isLoading,
-    required this.hasError,
-    required this.hasReachedMax,
-    required this.precedingScrollExtent,
-    this.loadingBuilder,
-    this.errorBuilder,
-    this.separatorBuilder,
-    this.emptyBuilder,
-  });
-
-  final double scrollExtentThreshold;
-
-  final Duration debounceDuration;
-
-  final int itemCount;
-
-  final bool isLoading;
-
-  final bool hasError;
-
-  final bool hasReachedMax;
-
-  final VoidCallback onFetchData;
-
-  /// See [SliverConstraints.precedingScrollExtent]
-  final double precedingScrollExtent;
-
-  final WidgetBuilder? loadingBuilder;
-
-  final WidgetBuilder? errorBuilder;
-
-  final WidgetBuilder? separatorBuilder;
-
-  final ItemBuilder itemBuilder;
-
-  final WidgetBuilder? emptyBuilder;
-
-  @override
-  State<_SliverInfiniteListInternal> createState() =>
-      _SliverInfiniteListInternalState();
-}
-
-class _SliverInfiniteListInternalState
-    extends State<_SliverInfiniteListInternal> {
+class _SliverInfiniteListState extends State<SliverInfiniteList> {
   late final CallbackDebouncer debounce;
 
-  ScrollPosition? scrollPosition;
+  int? _lastFetchedIndex;
 
   @override
   void initState() {
     super.initState();
     debounce = CallbackDebouncer(widget.debounceDuration);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      attemptFetch();
-    });
+    attemptFetch();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    detachFromPosition();
-    scrollPosition = Scrollable.of(context)?.position;
-    attachToPosition();
-  }
-
-  @override
-  void didUpdateWidget(_SliverInfiniteListInternal oldWidget) {
+  void didUpdateWidget(SliverInfiniteList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.itemCount != oldWidget.itemCount ||
-        widget.hasReachedMax != oldWidget.hasReachedMax) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        attemptFetch();
-      });
+    if (!widget.hasReachedMax && oldWidget.hasReachedMax) {
+      attemptFetch();
     }
   }
 
@@ -179,43 +87,21 @@ class _SliverInfiniteListInternalState
   void dispose() {
     super.dispose();
     debounce.dispose();
-    detachFromPosition();
-  }
-
-  void attachToPosition() {
-    scrollPosition?.addListener(attemptFetch);
-  }
-
-  void detachFromPosition() {
-    scrollPosition?.removeListener(attemptFetch);
   }
 
   void attemptFetch() {
-    if (isAtEnd &&
-        !widget.hasReachedMax &&
-        !widget.isLoading &&
-        !widget.hasError) {
-      debounce(widget.onFetchData);
+    if (!widget.hasReachedMax && !widget.isLoading && !widget.hasError) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        debounce(widget.onFetchData);
+      });
     }
   }
 
-  bool get isAtEnd {
-    if (widget.itemCount == 0) {
-      return true;
+  void onBuiltLast(int lastItemIndex) {
+    if (_lastFetchedIndex != lastItemIndex) {
+      _lastFetchedIndex = lastItemIndex;
+      attemptFetch();
     }
-
-    final scrollPosition = this.scrollPosition;
-    if (scrollPosition == null) {
-      return false;
-    }
-
-    // This considers the end of the scrollable content as the
-    // position to trigger a data fetch. It may cause unintuitive behaviors
-    // when there is any sliver after this one.
-    final maxScroll = scrollPosition.maxScrollExtent;
-
-    final currentScroll = scrollPosition.pixels - widget.precedingScrollExtent;
-    return currentScroll >= (maxScroll - widget.scrollExtentThreshold);
   }
 
   WidgetBuilder get loadingBuilder =>
@@ -244,6 +130,9 @@ class _SliverInfiniteListInternalState
       delegate: SliverChildBuilderDelegate(
         childCount: effectiveItemCount,
         (context, index) {
+          if (index == lastItemIndex) {
+            onBuiltLast(lastItemIndex);
+          }
           if (index == lastItemIndex && showBottomWidget) {
             if (widget.hasError) {
               return errorBuilder(context);

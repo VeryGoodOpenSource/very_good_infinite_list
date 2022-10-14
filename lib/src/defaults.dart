@@ -20,8 +20,5 @@ Widget defaultInfiniteListErrorBuilder(BuildContext buildContext) {
   );
 }
 
-/// Default value to [InfiniteList.scrollExtentThreshold].
-const defaultScrollExtentThreshold = 400.0;
-
 /// Default value to [InfiniteList.debounceDuration].
 const defaultDebounceDuration = Duration(milliseconds: 100);
