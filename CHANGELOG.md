@@ -1,3 +1,7 @@
+## [0.6.0+1] - 10/14/22
+
+- docs-fix: fix README header image
+
 ## [0.6.0] - 10/14/22
 
 - fix: remove need for an extra pull
