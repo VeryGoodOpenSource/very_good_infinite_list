@@ -1,7 +1,7 @@
 name: very_good_infinite_list
 description: >-
   A library for easily displaying paginated data, created by Very Good Ventures.
-  Great for activity feeds, news feeds, and more. 🦄
+  Great for activity feeds, news feeds, and more.
 version: 0.6.0
 repository: https://github.com/VeryGoodOpenSource/very_good_infinite_list
 issue_tracker: https://github.com/VeryGoodOpenSource/very_good_infinite_list/issues
