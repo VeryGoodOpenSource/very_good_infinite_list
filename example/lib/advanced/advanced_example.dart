@@ -35,7 +35,7 @@ class AdvancedExample extends StatelessWidget {
               hasError: state.error != null,
               hasReachedMax: state.hasReachedMax,
               onFetchData: () => context.read<PeopleCubit>().loadData(),
-              separatorBuilder: (context) => const Divider(),
+              separatorBuilder: (context, _) => const Divider(),
               itemBuilder: (context, index) {
                 return ListTile(
                   dense: true,

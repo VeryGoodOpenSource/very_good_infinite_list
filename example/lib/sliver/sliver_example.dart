@@ -53,7 +53,7 @@ class SliverExampleState extends State<SliverExample> {
             itemCount: _items.length,
             isLoading: _isLoading,
             onFetchData: _fetchData,
-            separatorBuilder: (context) => const Divider(),
+            separatorBuilder: (context, _) => const Divider(),
             itemBuilder: (context, index) {
               return ListTile(
                 dense: true,

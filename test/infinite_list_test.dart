@@ -169,7 +169,7 @@ void main() {
           InfiniteList(
             itemCount: itemCount,
             onFetchData: emptyCallback,
-            separatorBuilder: (_) {
+            separatorBuilder: (_, __) {
               separatorBuilderCalls++;
               return const Divider();
             },
@@ -178,6 +178,28 @@ void main() {
         );
 
         expect(separatorBuilderCalls, equals(separatorCount));
+      },
+    );
+
+    testWidgets(
+      'forward the correct indexes to separatorBuilder',
+      (tester) async {
+        const itemCount = 20;
+        final indexes = <int>[];
+
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: itemCount,
+            onFetchData: emptyCallback,
+            separatorBuilder: (_, index) {
+              indexes.add(index);
+              return const Divider();
+            },
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        expect(indexes, equals(List.generate(itemCount - 1, (index) => index)));
       },
     );
 
@@ -380,7 +402,7 @@ void main() {
               dimension: 40,
               child: ColoredBox(color: colors[i % colors.length]),
             ),
-            separatorBuilder: (_) => const SizedBox.square(
+            separatorBuilder: (_, __) => const SizedBox.square(
               dimension: 10,
               child: ColoredBox(color: Colors.pink),
             ),
@@ -422,7 +444,7 @@ void main() {
               dimension: 40,
               child: ColoredBox(color: colors[i % colors.length]),
             ),
-            separatorBuilder: (_) => const SizedBox.square(
+            separatorBuilder: (_, __) => const SizedBox.square(
               dimension: 10,
               child: ColoredBox(color: Colors.pink),
             ),

@@ -165,7 +165,7 @@ class InfiniteList extends StatelessWidget {
   ///
   /// Is optional and can be `null`.
   /// {@endtemplate}
-  final WidgetBuilder? separatorBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
 
   /// {@template item_builder}
   /// The builder used to build a widget for every index of the `itemCount`.

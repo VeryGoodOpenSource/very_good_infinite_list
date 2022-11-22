@@ -54,7 +54,7 @@ class SliverInfiniteList extends StatefulWidget {
   final WidgetBuilder? errorBuilder;
 
   /// {@macro separator_builder}
-  final WidgetBuilder? separatorBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
 
   /// {@macro item_builder}
   final ItemBuilder itemBuilder;
@@ -142,10 +142,10 @@ class _SliverInfiniteListState extends State<SliverInfiniteList> {
               return widget.emptyBuilder!(context);
             }
           } else {
+            final itemIndex = !showSeparator ? index : (index / 2).floor();
             if (showSeparator && index.isOdd) {
-              return widget.separatorBuilder!(context);
+              return widget.separatorBuilder!(context, itemIndex);
             } else {
-              final itemIndex = !showSeparator ? index : (index / 2).floor();
               return widget.itemBuilder(context, itemIndex);
             }
           }
