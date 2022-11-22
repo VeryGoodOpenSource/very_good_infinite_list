@@ -47,7 +47,11 @@ class SimpleExampleState extends State<SimpleExample> {
         itemCount: _items.length,
         isLoading: _isLoading,
         onFetchData: _fetchData,
-        separatorBuilder: (context) => const Divider(),
+        separatorBuilder: (context, index) {
+          return Divider(
+            color: index.isOdd ? Colors.black : Colors.blue,
+          );
+        },
         itemBuilder: (context, index) {
           return ListTile(
             dense: true,
