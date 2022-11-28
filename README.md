@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
         itemCount: _items.length,
         isLoading: _isLoading,
         onFetchData: _fetchData,
-        separatorBuilder: (context) => const Divider(),
+        separatorBuilder: (context, index) => const Divider(),
         itemBuilder: (context, index) {
           return ListTile(
             dense: true,
@@ -157,19 +157,19 @@ InfiniteList<String>(
   // An optional builder that's shown when the list of items is empty.
   //
   // If `null`, nothing is shown.
-  emptyBuilder: () => const Center(child: Text('No items.')),
+  emptyBuilder: (context) => const Center(child: Text('No items.')),
 
   // An optional builder that's shown at the end of the list when [isLoading]
   // is `true`.
   //
   // If `null`, a default builder is used that renders a centered
   // [CircularProgressIndicator].
-  loadingBuilder: () => const Center(child: CircularProgressIndicator()),
+  loadingBuilder: (context) => const Center(child: CircularProgressIndicator()),
 
   // An optional builder that's shown when [hasError] is not `null`.
   //
   // If `null`, a default builder is used that renders the text `"Error"`.
-  errorBuilder: () => const Center(child: Text('Error')),
+  errorBuilder: (context) => const Center(child: Text('Error')),
 
   // An optional builder that, when provided, is used to show a widget in
   // between every pair of items.
@@ -178,7 +178,7 @@ InfiniteList<String>(
   // a [Divider] between every tile.
   //
   // Is optional and can be `null`.
-  separatorBuilder: () => const Divider(),
+  separatorBuilder: (context, index) => const Divider(),
 );
 ```
 
