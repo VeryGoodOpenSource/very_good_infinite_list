@@ -1,32 +1,32 @@
-name: ci
+name: example
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/example.yaml"
+      - "example/lib/**"
+      - "example/test/**"
+      - "example/pubspec.yaml"
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+    paths:
+      - ".github/workflows/example.yaml"
+      - "example/lib/**"
+      - "example/test/**"
+      - "example/pubspec.yaml"
 
 jobs:
   semantic-pull-request:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
 
-  spell-check:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1
-    with:
-      includes: "**/*.md"
-      modified_files_only: false
-
   build:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
     with:
+      working_directory: "example/"
       flutter_channel: stable
       flutter_version: 3.7.3
-
-  pana_score:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1

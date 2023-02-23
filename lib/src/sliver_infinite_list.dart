@@ -12,10 +12,10 @@ import 'package:very_good_infinite_list/src/infinite_list.dart';
 class SliverInfiniteList extends StatefulWidget {
   /// Constructs a [SliverInfiniteList].
   const SliverInfiniteList({
-    super.key,
     required this.itemCount,
     required this.onFetchData,
     required this.itemBuilder,
+    super.key,
     this.debounceDuration = defaultDebounceDuration,
     this.isLoading = false,
     this.hasError = false,
