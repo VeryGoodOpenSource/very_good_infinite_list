@@ -22,10 +22,10 @@ import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 class InfiniteList extends StatelessWidget {
   /// {@macro infinite_list}
   const InfiniteList({
-    super.key,
     required this.itemCount,
     required this.onFetchData,
     required this.itemBuilder,
+    super.key,
     this.scrollController,
     this.scrollDirection = Axis.vertical,
     this.physics,
