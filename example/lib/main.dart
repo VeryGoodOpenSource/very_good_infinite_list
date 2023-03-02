@@ -1,5 +1,6 @@
 import 'package:example/advanced/advanced_example.dart';
 import 'package:example/simple/simple_example.dart';
+import 'package:example/simple/simple_grid_example.dart';
 import 'package:example/sliver/sliver_example.dart';
 import 'package:flutter/material.dart';
 
@@ -35,6 +36,17 @@ class Example extends StatelessWidget {
             subtitle: const Text(
               'A simple example that uses an Infinite List '
               'in a StatefulWidget.',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+          ),
+          const Divider(),
+          ListTile(
+            isThreeLine: true,
+            onTap: () => Navigator.of(context).push(SimpleGridExample.route()),
+            title: const Text('Simple Grid Example'),
+            subtitle: const Text(
+              'A simple example that uses an Infinite List '
+                  'in a StatefulWidget.',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),
