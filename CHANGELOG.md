@@ -1,9 +1,9 @@
 ## [0.7.1] - 21/08/23
 
 - feat: add option to centralize builders in `InfiniteList`:
-  - for `loadingBuild` builder => `centerLoading`
-  - for `errorBuild` builder => `centerError`
-  - for `emptyBuild` builder => `centerEmpty`
+  - for `loadingBuilder` builder => `centerLoading`
+  - for `errorBuilder` builder => `centerError`
+  - for `emptyBuilder` builder => `centerEmpty`
 
 ## [0.7.0] - 11/28/22
 
