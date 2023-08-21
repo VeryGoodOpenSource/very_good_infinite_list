@@ -1,3 +1,10 @@
+## [0.7.1] - 21/08/23
+
+- feat: add option to centralize builders in `InfiniteList`:
+  - for `loadingBuild` builder => `centerLoading`
+  - for `errorBuild` builder => `centerError`
+  - for `emptyBuild` builder => `centerEmpty`
+
 ## [0.7.0] - 11/28/22
 
 - **BREAKING** feat: add index to separator builder

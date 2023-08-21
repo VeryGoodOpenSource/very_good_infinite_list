@@ -89,6 +89,55 @@ class _MyAppState extends State<MyApp> {
 
 ### Customizations
 
+#### Custom Builders
+
+`InfiniteList` has multiple optional parameters which allow you to customize the loading, error and empty list builders.
+
+```dart
+
+  /// to customize and centralize the loading builder
+  final list = InfiniteList(
+    itemCount: 0,
+    isLoading: true,
+    /// this flag is used to center the loading builder, is optional and defaults to false
+    centerLoading: true,
+    /// this parameter is optional and defaults to a circular progress indicator
+    loadingBuilder: (_) => const LinearProgressIndicator(),
+    onFetchData: () async {},
+    itemBuilder: (_, index) {
+      return ListTile(title: Text('Item $index'));
+    },
+  );
+
+  /// to customize and centralize the error builder
+  final list = InfiniteList(      
+    itemCount: 0,
+    hasError: true,
+    /// this flag is used to center the error builder, is optional and defaults to false
+    centerError: true,
+    /// this parameter is optional and defaults to a text widget with the text 'Error'
+    errorBuilder: (_) => const Icon(Icons.error),
+    onFetchData: () async {},
+    itemBuilder: (_, index) {
+      return ListTile(title: Text('Item $index'));
+    },
+  );
+
+  /// to customize and centralize the empty builder
+  final list = InfiniteList(
+    itemCount: 0,
+    /// this flag is used to center the empty builder, is optional and defaults to false
+    centerEmpty: true,
+    /// this parameter is optional but don't have a default widget
+    emptyBuilder: (_) => const Image.asset('assets/images/empty.png'),
+    onFetchData: () async {},
+    itemBuilder: (_, index) {
+      return ListTile(title: Text('Item $index'));
+    },
+  );
+
+```
+
 #### InfiniteList
 
 `InfiniteList` has multiple optional parameters which allow you to customize the loading and error behavior.
