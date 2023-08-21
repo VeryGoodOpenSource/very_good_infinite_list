@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:very_good_infinite_list/src/callback_debouncer.dart';
 import 'package:very_good_infinite_list/src/defaults.dart';
 import 'package:very_good_infinite_list/src/infinite_list.dart';
+import 'package:very_good_infinite_list/src/sliver_centralized.dart';
 
 /// The sliver version of [InfiniteList].
 ///
@@ -20,6 +21,9 @@ class SliverInfiniteList extends StatefulWidget {
     this.isLoading = false,
     this.hasError = false,
     this.hasReachedMax = false,
+    this.centerLoading = false,
+    this.centerError = false,
+    this.centerEmpty = false,
     this.loadingBuilder,
     this.errorBuilder,
     this.separatorBuilder,
@@ -58,6 +62,15 @@ class SliverInfiniteList extends StatefulWidget {
 
   /// {@macro item_builder}
   final ItemBuilder itemBuilder;
+
+  /// {@macro center_loading}
+  final bool centerLoading;
+
+  /// {@macro center_error}
+  final bool centerError;
+
+  /// {@macro center_empty}
+  final bool centerEmpty;
 
   @override
   State<SliverInfiniteList> createState() => _SliverInfiniteListState();
@@ -125,6 +138,18 @@ class _SliverInfiniteListState extends State<SliverInfiniteList> {
         (!hasItems ? 0 : widget.itemCount + separatorCount) +
             (showBottomWidget ? 1 : 0);
     final lastItemIndex = effectiveItemCount - 1;
+
+    Widget? centeredSliver;
+
+    if (widget.centerLoading && widget.isLoading && effectiveItemCount == 1) {
+      centeredSliver = SliverCentralized(child: loadingBuilder(context));
+    } else if (widget.centerError && widget.hasError) {
+      centeredSliver = SliverCentralized(child: errorBuilder(context));
+    } else if (widget.centerEmpty && showEmpty) {
+      centeredSliver = SliverCentralized(child: widget.emptyBuilder!(context));
+    }
+
+    if (centeredSliver != null) return centeredSliver;
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
