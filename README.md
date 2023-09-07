@@ -89,55 +89,6 @@ class _MyAppState extends State<MyApp> {
 
 ### Customizations
 
-#### Custom Builders
-
-`InfiniteList` has multiple optional parameters which allow you to customize the loading, error and empty list builders.
-
-```dart
-
-  /// to customize and centralize the loading builder
-  final list = InfiniteList(
-    itemCount: 0,
-    isLoading: true,
-    /// this flag is used to center the loading builder, is optional and defaults to false
-    centerLoading: true,
-    /// this parameter is optional and defaults to a circular progress indicator
-    loadingBuilder: (_) => const LinearProgressIndicator(),
-    onFetchData: () async {},
-    itemBuilder: (_, index) {
-      return ListTile(title: Text('Item $index'));
-    },
-  );
-
-  /// to customize and centralize the error builder
-  final list = InfiniteList(      
-    itemCount: 0,
-    hasError: true,
-    /// this flag is used to center the error builder, is optional and defaults to false
-    centerError: true,
-    /// this parameter is optional and defaults to a text widget with the text 'Error'
-    errorBuilder: (_) => const Icon(Icons.error),
-    onFetchData: () async {},
-    itemBuilder: (_, index) {
-      return ListTile(title: Text('Item $index'));
-    },
-  );
-
-  /// to customize and centralize the empty builder
-  final list = InfiniteList(
-    itemCount: 0,
-    /// this flag is used to center the empty builder, is optional and defaults to false
-    centerEmpty: true,
-    /// this parameter is optional but don't have a default widget
-    emptyBuilder: (_) => const Image.asset('assets/images/empty.png'),
-    onFetchData: () async {},
-    itemBuilder: (_, index) {
-      return ListTile(title: Text('Item $index'));
-    },
-  );
-
-```
-
 #### InfiniteList
 
 `InfiniteList` has multiple optional parameters which allow you to customize the loading and error behavior.
@@ -207,6 +158,9 @@ InfiniteList<String>(
   //
   // If `null`, nothing is shown.
   emptyBuilder: (context) => const Center(child: Text('No items.')),
+  
+  // Flag used to center the empty builder, it is optional and defaults to false
+  centerEmpty: true,
 
   // An optional builder that's shown at the end of the list when [isLoading]
   // is `true`.
@@ -215,10 +169,16 @@ InfiniteList<String>(
   // [CircularProgressIndicator].
   loadingBuilder: (context) => const Center(child: CircularProgressIndicator()),
 
+  // Flag used to center the loading builder, it is optional and defaults to false
+  centerLoading: true,
+
   // An optional builder that's shown when [hasError] is not `null`.
   //
   // If `null`, a default builder is used that renders the text `"Error"`.
   errorBuilder: (context) => const Center(child: Text('Error')),
+
+  // Flag used to center the error builder, it is optional and defaults to false
+  centerError: true,
 
   // An optional builder that, when provided, is used to show a widget in
   // between every pair of items.
