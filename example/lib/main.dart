@@ -1,4 +1,5 @@
 import 'package:example/advanced/advanced_example.dart';
+import 'package:example/centralized/centralized_examples.dart';
 import 'package:example/simple/simple_example.dart';
 import 'package:example/sliver/sliver_example.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,20 @@ class Example extends StatelessWidget {
             subtitle: const Text(
               'A simple example that uses an Infinite List '
               'in a StatefulWidget.',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+          ),
+          const Divider(),
+          ListTile(
+            isThreeLine: true,
+            onTap: () => Navigator.of(context).push(
+              CentralizedExamples.route(),
+            ),
+            title: const Text('Centralized Example'),
+            subtitle: const Text(
+              'An example that uses an Infinite List '
+              'in a StatefulWidget and centralizes the loading, '
+              'empty and error states.',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),

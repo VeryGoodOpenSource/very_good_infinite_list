@@ -158,6 +158,9 @@ InfiniteList<String>(
   //
   // If `null`, nothing is shown.
   emptyBuilder: (context) => const Center(child: Text('No items.')),
+  
+  // Flag used to center the empty builder, it is optional and defaults to false
+  centerEmpty: true,
 
   // An optional builder that's shown at the end of the list when [isLoading]
   // is `true`.
@@ -166,10 +169,16 @@ InfiniteList<String>(
   // [CircularProgressIndicator].
   loadingBuilder: (context) => const Center(child: CircularProgressIndicator()),
 
+  // Flag used to center the loading builder, it is optional and defaults to false
+  centerLoading: true,
+
   // An optional builder that's shown when [hasError] is not `null`.
   //
   // If `null`, a default builder is used that renders the text `"Error"`.
   errorBuilder: (context) => const Center(child: Text('Error')),
+
+  // Flag used to center the error builder, it is optional and defaults to false
+  centerError: true,
 
   // An optional builder that, when provided, is used to show a widget in
   // between every pair of items.

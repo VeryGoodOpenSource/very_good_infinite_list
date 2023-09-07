@@ -40,6 +40,9 @@ class InfiniteList extends StatelessWidget {
     this.loadingBuilder,
     this.errorBuilder,
     this.separatorBuilder,
+    this.centerLoading = false,
+    this.centerError = false,
+    this.centerEmpty = false,
   });
 
   /// {@template scroll_controller}
@@ -174,6 +177,27 @@ class InfiniteList extends StatelessWidget {
   /// {@endtemplate}
   final ItemBuilder itemBuilder;
 
+  /// {@template center_loading}
+  /// Indicates if the [loadingBuilder] should be centered.
+  ///
+  /// Defaults to `false`.
+  /// {@endtemplate}
+  final bool centerLoading;
+
+  /// {@template center_error}
+  /// Indicates if the [errorBuilder] should be centered.
+  ///
+  /// Defaults to `false`.
+  /// {@endtemplate}
+  final bool centerError;
+
+  /// {@template center_empty}
+  /// Indicates if the [emptyBuilder] should be centered.
+  ///
+  /// Defaults to `false`.
+  /// {@endtemplate}
+  final bool centerEmpty;
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -195,9 +219,12 @@ class InfiniteList extends StatelessWidget {
             hasError: hasError,
             hasReachedMax: hasReachedMax,
             loadingBuilder: loadingBuilder,
+            centerLoading: centerLoading,
             errorBuilder: errorBuilder,
+            centerError: centerError,
             separatorBuilder: separatorBuilder,
             emptyBuilder: emptyBuilder,
+            centerEmpty: centerEmpty,
           ),
         )
       ],

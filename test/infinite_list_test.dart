@@ -383,6 +383,51 @@ void main() {
       });
     });
 
+    group('centralized properties', () {
+      testWidgets('centerEmpty', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 0,
+            centerEmpty: true,
+            emptyBuilder: (_) => const Text('No items'),
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        expect(find.text('No items'), findsOneWidget);
+      });
+
+      testWidgets('centerError', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 0,
+            hasError: true,
+            centerError: true,
+            errorBuilder: (_) => const Text('Error'),
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        expect(find.text('Error'), findsOneWidget);
+      });
+
+      testWidgets('centerLoading', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 0,
+            isLoading: true,
+            centerLoading: true,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      });
+    });
+
     group('goldens', () {
       const tags = 'golden';
       String goldenPath(String fileName) => 'goldens/$fileName.png';
@@ -459,6 +504,93 @@ void main() {
           await tester.fling(
             find.byWidget(subject),
             const Offset(-1000, 0),
+            1000,
+          );
+
+          await tester.pump(const Duration(milliseconds: 16));
+
+          await expectLater(
+            find.byWidget(subject),
+            matchesGoldenFile(goldenPath('$path/after_scroll')),
+          );
+        },
+      );
+
+      testWidgets(
+        'render horizontally when horizontally scrolled to the end '
+        'with centered loading',
+        (tester) async {
+          const path = 'successful_horizontally_scroll_with_centered_loading';
+
+          const colors = [Colors.red, Colors.green, Colors.blue];
+          final subject = InfiniteList(
+            onFetchData: emptyCallback,
+            isLoading: true,
+            itemCount: 30,
+            centerLoading: true,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, __) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Colors.pink),
+            ),
+          );
+          await tester.pumpApp(subject);
+
+          await expectLater(
+            find.byWidget(subject),
+            matchesGoldenFile(goldenPath('$path/before_scroll')),
+          );
+
+          await tester.fling(
+            find.byWidget(subject),
+            const Offset(0, -1000),
+            1000,
+          );
+
+          await tester.pump(const Duration(milliseconds: 16));
+          await expectLater(
+            find.byWidget(subject),
+            matchesGoldenFile(goldenPath('$path/after_scroll')),
+          );
+        },
+      );
+
+      testWidgets(
+        'renders successfully when scrolled vertically to the end '
+        'with centered loading',
+        tags: tags,
+        (tester) async {
+          const path = 'successful_vertically_scroll_with_centered_loading';
+
+          const colors = [Colors.red, Colors.green, Colors.blue];
+          final subject = InfiniteList(
+            onFetchData: emptyCallback,
+            isLoading: true,
+            itemCount: 30,
+            centerLoading: true,
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, __) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Colors.pink),
+            ),
+          );
+          await tester.pumpApp(subject);
+
+          await expectLater(
+            find.byWidget(subject),
+            matchesGoldenFile(goldenPath('$path/before_scroll')),
+          );
+
+          await tester.fling(
+            find.byWidget(subject),
+            const Offset(0, -1000),
             1000,
           );
 
