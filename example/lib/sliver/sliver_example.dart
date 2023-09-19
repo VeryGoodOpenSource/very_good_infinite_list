@@ -60,7 +60,7 @@ class SliverExampleState extends State<SliverExample> {
                 title: Text(_items[index]),
               );
             },
-          )
+          ),
         ],
       ),
     );
