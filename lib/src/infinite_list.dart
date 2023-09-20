@@ -226,7 +226,7 @@ class InfiniteList extends StatelessWidget {
             emptyBuilder: emptyBuilder,
             centerEmpty: centerEmpty,
           ),
-        )
+        ),
       ],
     );
   }
