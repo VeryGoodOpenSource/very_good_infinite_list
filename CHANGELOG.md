@@ -1,4 +1,9 @@
-## [0.7.0] - 11/28/22
+# 0.7.1 
+ 
+- feat: update workflows and repository infra structure ([#50](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/50))
+- feat: centralize builders options ([#55](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/55))
+
+- ## [0.7.0] - 11/28/22
 
 - **BREAKING** feat: add index to separator builder
 
