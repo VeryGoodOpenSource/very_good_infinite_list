@@ -113,7 +113,7 @@ InfiniteList<String>(
   // While set to `true`, the [onFetchData] callback will not be triggered
   // and the [loadingBuilder] will be rendered.
   //
-  // Is set to `false` by default and cannot be `null`.
+  // Is set to `false` by default.
   isLoading: false,
 
   // Indicates if an error has occurred.
@@ -121,33 +121,27 @@ InfiniteList<String>(
   // While set to `true`, the [onFetchData] callback will not be triggered
   // and the [errorBuilder] will be rendered.
   //
-  // Is set to `false` by default and cannot be `null`.
+  // Is set to `false` by default.
   hasError: false,
 
   // Indicates if the list should be reversed.
   //
   // If set to `true`, the list of items, [loadingBuilder] and [errorBuilder]
   // will be rendered from bottom to top.
+  //
+  // Is set to `false` by default.
   reverse: false,
 
   // The duration with which calls to [onFetchData] will be debounced.
   //
-  // Is set to a duration of 100 milliseconds by default and cannot be `null`.
+  // Is set to a duration of 100 milliseconds by default.
   debounceDuration: const Duration(milliseconds: 100),
 
-  // The offset, in pixels, that the [scrollController] must be scrolled over
+  // The offset, in pixels, that the internal [ScrollView] must be scrolled over
   // to trigger [onFetchData].
-  //
-  // This is useful for fetching data _before_ the user has scrolled all the
-  // way to the end of the list, so the fetching mechanism is more well hidden.
-  //
-  // For example, if this is set to `400.0` (the default), [onFetchData] will
-  // be called when the list is scrolled `400.0` pixels away from the bottom
-  // (or the top if [reverse] is `true`).
-  //
-  // This value must be `0.0` or greater, is set to `400.0` by default and
-  // cannot be `null`.
-  scrollExtentThreshold: 400.0,
+  // 
+  // Defaults to the same as [RenderAbstractViewport.defaultCacheExtent], which is 250.
+  cacheExtent: 250.0,
 
   // The amount of space by which to inset the list of items.
   //
@@ -188,6 +182,17 @@ InfiniteList<String>(
   //
   // Is optional and can be `null`.
   separatorBuilder: (context, index) => const Divider(),
+
+  // An optional [Axis] to be used by the internal [ScrollView] that defines
+  // the axis of scroll. 
+  //
+  // Is set to `Axis.vertical` by default.
+  scrollDirection: Axis.vertical,
+
+  // An optional [ScrollPhysics] to be used by the internal [ScrollView].
+  //
+  // Default to tha same as [ScrollView].
+  physics: const AlwaysScrollableScrollPhysics(),
 );
 ```
 
