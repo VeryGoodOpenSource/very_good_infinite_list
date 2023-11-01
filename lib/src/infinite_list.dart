@@ -14,7 +14,7 @@ import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 /// [onFetchData] will be called automatically.
 ///
 /// The [itemCount], [hasReachedMax], [onFetchData] and [itemBuilder] must be
-/// provided and cannot be `null`.
+/// provided.
 /// {@endtemplate}
 ///
 /// See also:
@@ -64,7 +64,7 @@ class InfiniteList extends StatelessWidget {
   /// {@template debounce_duration}
   /// The duration with which calls to [onFetchData] will be debounced.
   ///
-  /// Is set to [defaultDebounceDuration] by default and cannot be `null`.
+  /// Is set to [defaultDebounceDuration] by default.
   /// {@endtemplate}
   final Duration debounceDuration;
 
@@ -79,7 +79,7 @@ class InfiniteList extends StatelessWidget {
   /// {@template item_count}
   /// The amount of items that need to be rendered by the [itemBuilder].
   ///
-  /// Is required and cannot be `null`.
+  /// Is required.
   /// {@endtemplate}
   final int itemCount;
 
@@ -89,7 +89,7 @@ class InfiniteList extends StatelessWidget {
   /// While set to `true`, the [onFetchData] callback will not be triggered
   /// and the [loadingBuilder] will be rendered.
   ///
-  /// Is set to `false` by default and cannot be `null`.
+  /// Is set to `false` by default.
   /// {@endtemplate}
   final bool isLoading;
 
@@ -99,7 +99,7 @@ class InfiniteList extends StatelessWidget {
   /// While set to `true`, the [onFetchData] callback will not be triggered
   /// and the [errorBuilder] will be rendered.
   ///
-  /// Is set to `false` by default and cannot be `null`.
+  /// Is set to `false` by default.
   /// {@endtemplate}
   final bool hasError;
 
@@ -109,7 +109,7 @@ class InfiniteList extends StatelessWidget {
   ///
   /// While set to `true`, the [onFetchData] callback will not be triggered.
   ///
-  /// Is set to `false` by default and cannot be `null`.
+  /// Is set to `false` by default.
   /// {@endtemplate}
   final bool hasReachedMax;
 
@@ -124,7 +124,7 @@ class InfiniteList extends StatelessWidget {
   /// Additionally, every call to this will be debounced by the provided
   /// [debounceDuration].
   ///
-  /// Is required and cannot be `null`.
+  /// Is required.
   /// {@endtemplate}
   final VoidCallback onFetchData;
 
@@ -132,9 +132,7 @@ class InfiniteList extends StatelessWidget {
   final double? cacheExtent;
 
   /// {@template padding}
-  /// The amount of space by which to inset the list of items.
-  ///
-  /// Is optional and can be `null`.
+  /// The optional amount of space by which to inset the list of items.
   /// {@endtemplate}
   final EdgeInsets? padding;
 
@@ -165,15 +163,13 @@ class InfiniteList extends StatelessWidget {
   ///
   /// If the [itemBuilder] returns a [ListTile], this is commonly used to render
   /// a [Divider] between every tile.
-  ///
-  /// Is optional and can be `null`.
   /// {@endtemplate}
   final IndexedWidgetBuilder? separatorBuilder;
 
   /// {@template item_builder}
   /// The builder used to build a widget for every index of the `itemCount`.
   ///
-  /// Is required and cannot be `null`.
+  /// Is required.
   /// {@endtemplate}
   final ItemBuilder itemBuilder;
 
