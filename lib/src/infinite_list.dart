@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:very_good_infinite_list/src/defaults.dart';
 import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 
-/// {@macro infinite_list}
+/// {@template infinite_list}
 /// A widget that makes it easy to declaratively load and display paginated data
 /// as a list.
 ///
@@ -155,6 +155,7 @@ class InfiniteList extends StatelessWidget {
   /// An optional builder that's shown when [hasError] is not `null`.
   ///
   /// Defaults to [defaultInfiniteListErrorBuilder].
+  /// {@endtemplate}
   final WidgetBuilder? errorBuilder;
 
   /// {@template separator_builder}
