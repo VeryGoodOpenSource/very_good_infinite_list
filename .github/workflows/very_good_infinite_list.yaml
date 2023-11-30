@@ -1,0 +1,25 @@
+name: very_good_infinite_list
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        flutter-version:
+          - "3.10.0" # The minimum Dart SDK version supported by the package.
+          - "stable"
+
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
+    with:
+      flutter-version: ${{ matrix.flutter-version }}
