@@ -2,7 +2,7 @@ name: very_good_infinite_list
 description: >-
   A library for easily displaying paginated data, created by Very Good Ventures.
   Great for activity feeds, news feeds, and more.
-version: 0.7.1 
+version: 0.7.1
 repository: https://github.com/VeryGoodOpenSource/very_good_infinite_list
 issue_tracker: https://github.com/VeryGoodOpenSource/very_good_infinite_list/issues
 homepage: https://github.com/VeryGoodOpenSource/very_good_infinite_list
@@ -10,7 +10,7 @@ documentation: https://github.com/VeryGoodOpenSource/very_good_infinite_list
 topics: [flutter, list-view, scroll, widgets]
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
+  sdk: ">=3.0.0 <4.0.0"
   flutter: ">=3.0.0"
 
 dependencies:
