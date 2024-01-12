@@ -20,6 +20,6 @@ jobs:
           - "3.10.0" # The minimum Dart SDK version supported by the package.
           - "stable"
 
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
     with:
       flutter-version: ${{ matrix.flutter-version }}
