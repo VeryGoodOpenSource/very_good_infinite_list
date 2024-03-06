@@ -519,6 +519,7 @@ void main() {
       testWidgets(
         'render horizontally when horizontally scrolled to the end '
         'with centered loading',
+        tags: tags,
         (tester) async {
           const path = 'successful_horizontally_scroll_with_centered_loading';
 
