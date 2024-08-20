@@ -28,7 +28,7 @@ jobs:
         flutter-version:
           # The version of Flutter to use should use the minimum Dart SDK version supported by the package,
           # refer to https://docs.flutter.dev/development/tools/sdk/releases.
-          - "3.13.3"
+          - "3.24.0"
           - "3.x"
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
     with:
