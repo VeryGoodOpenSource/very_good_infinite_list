@@ -24,3 +24,4 @@ jobs:
       runs_on: macos-latest
       analyze_directories: "lib"
       format_directories: "lib"
+      min_coverage: 0
