@@ -22,3 +22,5 @@ jobs:
       flutter_channel: stable
       working_directory: example
       runs_on: macos-latest
+      analyze_directories: "lib"
+      format_directories: "lib"
