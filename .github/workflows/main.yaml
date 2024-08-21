@@ -35,6 +35,7 @@ jobs:
       flutter_channel: stable
       flutter_version: ${{ matrix.flutter-version }}
       package_get_excludes: example
+      runs_on: macos-latest
 
   pana_score:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
