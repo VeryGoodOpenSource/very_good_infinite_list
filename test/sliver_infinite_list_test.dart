@@ -6,12 +6,13 @@ extension on WidgetTester {
   Future<void> pumpSlivers(
     List<Widget> slivers, {
     double? cacheExtent,
+    double height = 500,
   }) async {
     await pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: SizedBox(
-            height: 500,
+            height: height,
             child: CustomScrollView(
               cacheExtent: cacheExtent,
               slivers: slivers,
@@ -30,9 +31,11 @@ void main() {
       testWidgets('on mount', (tester) async {
         var itemCount = 0;
         var onFetchDataCalls = 0;
+        const itemSize = Size.square(10);
 
         await tester.pumpSlivers(
           cacheExtent: 0,
+          height: itemSize.height * 3,
           [
             StatefulBuilder(
               builder: (context, setState) {
@@ -41,13 +44,11 @@ void main() {
                   debounceDuration: Duration.zero,
                   onFetchData: () {
                     setState(() {
-                      itemCount += 8;
+                      itemCount += 1;
                       onFetchDataCalls++;
                     });
                   },
-                  itemBuilder: (_, i) => SizedBox(
-                    child: Text('$i'),
-                  ),
+                  itemBuilder: (_, i) => SizedBox.fromSize(size: itemSize),
                 );
               },
             ),

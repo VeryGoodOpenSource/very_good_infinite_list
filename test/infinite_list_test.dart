@@ -141,16 +141,21 @@ void main() {
       (tester) async {
         const itemCount = 50;
         var itemBuilderCalls = 0;
+        const itemSize = Size.square(10);
 
         await tester.pumpApp(
-          InfiniteList(
-            itemCount: itemCount,
-            hasReachedMax: true,
-            onFetchData: emptyCallback,
-            itemBuilder: (_, i) {
-              itemBuilderCalls++;
-              return Text('$i');
-            },
+          SizedBox(
+            width: itemSize.width * itemCount,
+            height: itemSize.height * itemCount,
+            child: InfiniteList(
+              itemCount: itemCount,
+              hasReachedMax: true,
+              onFetchData: emptyCallback,
+              itemBuilder: (_, i) {
+                itemBuilderCalls++;
+                return SizedBox.fromSize(size: itemSize);
+              },
+            ),
           ),
         );
 
