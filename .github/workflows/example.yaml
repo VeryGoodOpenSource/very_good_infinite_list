@@ -25,4 +25,4 @@ jobs:
       analyze_directories: "lib"
       format_directories: "lib"
       min_coverage: 0
-      setup: mkdir coverage && touch coverage/lcov.info && pwd
+      setup: mkdir coverage && touch coverage/lcov.info && pwd && cd coverage && ls -la
