@@ -7,7 +7,7 @@ extension on WidgetTester {
     await pumpWidget(
       MaterialApp(
         home: Scaffold(
-          appBar: AppBar(),
+          backgroundColor: Colors.transparent,
           body: widget,
         ),
       ),
