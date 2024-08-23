@@ -5,19 +5,21 @@ publish_to: none
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ^3.5.0
 
 dependencies:
-  bloc: ^8.0.3
-  equatable: ^2.0.3
+  bloc: ^8.1.4
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.0.1
+  flutter_bloc: ^8.1.6
   very_good_infinite_list:
     path: ../
 
 dev_dependencies:
-  very_good_analysis: ^3.1.0
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^6.0.0
 
 flutter:
   uses-material-design: true
