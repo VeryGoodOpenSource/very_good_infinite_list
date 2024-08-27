@@ -11,7 +11,7 @@ topics: [flutter, list-view, scroll, widgets]
 
 environment:
   sdk: ^3.5.0
-  flutter: ^3.24.0
+  flutter: ">=3.24.0"
 
 dependencies:
   flutter:
