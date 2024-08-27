@@ -1,0 +1,21 @@
+name: pub_publish
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+jobs:
+  publish:
+    permissions:
+      id-token: write # This is required for requesting the JWT
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+      - name: 📦 Install Dependencies
+        run: flutter pub get
+      - name: 📢 Publish
+        run: dart pub publish --force
