@@ -43,6 +43,7 @@ class InfiniteList extends StatelessWidget {
     this.centerLoading = false,
     this.centerError = false,
     this.centerEmpty = false,
+    this.findChildIndexCallback,
   });
 
   /// {@template scroll_controller}
@@ -195,6 +196,12 @@ class InfiniteList extends StatelessWidget {
   /// {@endtemplate}
   final bool centerEmpty;
 
+  /// {@template find_child_index_callback}
+  /// An optional callback that returns the index of the child widget that
+  /// corresponds to the given key.
+  /// {@endtemplate}
+  final int? Function(Key)? findChildIndexCallback;
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -222,6 +229,7 @@ class InfiniteList extends StatelessWidget {
             separatorBuilder: separatorBuilder,
             emptyBuilder: emptyBuilder,
             centerEmpty: centerEmpty,
+            findChildIndexCallback: findChildIndexCallback,
           ),
         ),
       ],
