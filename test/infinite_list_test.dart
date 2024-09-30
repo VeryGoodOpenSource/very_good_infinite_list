@@ -108,6 +108,26 @@ void main() {
       },
     );
 
+    testWidgets('passed find findChildIndexCallback to internal SliverList',
+        (tester) async {
+      await tester.pumpApp(
+        InfiniteList(
+          itemCount: 2,
+          onFetchData: emptyCallback,
+          itemBuilder: (_, i) => Text('$i', key: ValueKey('key_$i')),
+          findChildIndexCallback: (key) {
+            final valueKey = key as ValueKey;
+            final keyId = valueKey.value as String;
+            return int.parse(keyId.split('_')[1]);
+          },
+        ),
+      );
+
+      final sliverList = tester.widget<SliverList>(find.byType(SliverList));
+      expect(sliverList.delegate.findIndexByKey(const Key('key_0')), equals(0));
+      expect(sliverList.delegate.findIndexByKey(const Key('key_1')), equals(1));
+    });
+
     testWidgets(
       'uses media query padding when padding is omitted',
       (tester) async {
