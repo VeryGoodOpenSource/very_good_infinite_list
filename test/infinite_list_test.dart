@@ -108,7 +108,7 @@ void main() {
       },
     );
 
-    testWidgets('passed find findChildIndexCallback to internal SliverList',
+    testWidgets('passes findChildIndexCallback to internal SliverList.delegate',
         (tester) async {
       await tester.pumpApp(
         InfiniteList(
