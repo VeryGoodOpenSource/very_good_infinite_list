@@ -28,6 +28,7 @@ class SliverInfiniteList extends StatefulWidget {
     this.errorBuilder,
     this.separatorBuilder,
     this.emptyBuilder,
+    this.findChildIndexCallback,
   });
 
   /// {@macro debounce_duration}
@@ -71,6 +72,9 @@ class SliverInfiniteList extends StatefulWidget {
 
   /// {@macro center_empty}
   final bool centerEmpty;
+
+  /// {@macro find_child_index_callback}
+  final int? Function(Key)? findChildIndexCallback;
 
   @override
   State<SliverInfiniteList> createState() => _SliverInfiniteListState();
@@ -154,6 +158,7 @@ class _SliverInfiniteListState extends State<SliverInfiniteList> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         childCount: effectiveItemCount,
+        findChildIndexCallback: widget.findChildIndexCallback,
         (context, index) {
           if (index == lastItemIndex) {
             onBuiltLast(lastItemIndex);
