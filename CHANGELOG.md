@@ -1,12 +1,16 @@
-# 0.8.0 
+# 0.9.0
+
+- feat: expose `findChildIndexCallback` of `SliverChildBuilderDelegate` ([#76](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/76))
+
+# 0.8.0
 
 - docs: update readme option docs ([#59](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/59))
 - docs: resolve doc directory missing tag ([#64](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/64))
 - test: add missing golden tag to golden test ([#67](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/67))
 - chore: bump dependencies ([#72](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/72))
 
-# 0.7.1 
- 
+# 0.7.1
+
 - feat: update workflows and repository infra structure ([#50](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/50))
 - feat: centralize builders options ([#55](https://github.com/VeryGoodOpenSource/very_good_infinite_list/pull/55))
 
