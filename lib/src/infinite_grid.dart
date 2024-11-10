@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:very_good_infinite_list/src/defaults.dart';
 import 'package:very_good_infinite_list/src/sliver_infinite_grid.dart';
-import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 
 /// {@template infinite_grid}
 /// A widget that makes it easy to declaratively load and display paginated data
@@ -19,7 +18,7 @@ import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 /// {@endtemplate}
 ///
 /// See also:
-/// - [SliverInfiniteList]. The sliver version of this widget.
+/// - [SliverInfiniteGrid]. The sliver version of this widget.
 class InfiniteGrid extends StatelessWidget {
   /// {@macro infinite_grid}
   const InfiniteGrid({
@@ -41,7 +40,6 @@ class InfiniteGrid extends StatelessWidget {
     this.emptyBuilder,
     this.loadingBuilder,
     this.errorBuilder,
-    this.separatorBuilder,
     this.centerLoading = false,
     this.centerError = false,
     this.centerEmpty = false,
@@ -161,15 +159,6 @@ class InfiniteGrid extends StatelessWidget {
   /// {@endtemplate}
   final WidgetBuilder? errorBuilder;
 
-  /// {@template separator_builder}
-  /// An optional builder that, when provided, is used to show a widget in
-  /// between every pair of items.
-  ///
-  /// If the [itemBuilder] returns a [ListTile], this is commonly used to render
-  /// a [Divider] between every tile.
-  /// {@endtemplate}
-  final IndexedWidgetBuilder? separatorBuilder;
-
   /// {@template item_builder}
   /// The builder used to build a widget for every index of the `itemCount`.
   ///
@@ -234,7 +223,6 @@ class InfiniteGrid extends StatelessWidget {
             centerLoading: centerLoading,
             errorBuilder: errorBuilder,
             centerError: centerError,
-            separatorBuilder: separatorBuilder,
             emptyBuilder: emptyBuilder,
             centerEmpty: centerEmpty,
             findChildIndexCallback: findChildIndexCallback,
@@ -269,9 +257,9 @@ class _ContextualSliverPadding extends StatelessWidget {
       if (mediaQuery != null) {
         // Automatically pad sliver with padding from MediaQuery.
         late final mediaQueryHorizontalPadding =
-            mediaQuery.padding.copyWith(top: 0, bottom: 0);
+        mediaQuery.padding.copyWith(top: 0, bottom: 0);
         late final mediaQueryVerticalPadding =
-            mediaQuery.padding.copyWith(left: 0, right: 0);
+        mediaQuery.padding.copyWith(left: 0, right: 0);
         // Consume the main axis padding with SliverPadding.
         effectivePadding = scrollDirection == Axis.vertical
             ? mediaQueryVerticalPadding
