@@ -163,7 +163,7 @@ class _SliverInfiniteGridState extends State<SliverInfiniteGrid> {
       delegate: SliverChildBuilderDelegate(
         childCount: effectiveItemCount,
         findChildIndexCallback: widget.findChildIndexCallback,
-            (context, index) {
+        (context, index) {
           if (index == lastItemIndex) {
             onBuiltLast(lastItemIndex);
           }

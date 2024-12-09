@@ -193,7 +193,6 @@ class InfiniteGrid extends StatelessWidget {
   /// {@endtemplate}
   final int? Function(Key)? findChildIndexCallback;
 
-
   /// {@template grid_delegate}
   ///
   /// {@endtemplate}
@@ -257,9 +256,9 @@ class _ContextualSliverPadding extends StatelessWidget {
       if (mediaQuery != null) {
         // Automatically pad sliver with padding from MediaQuery.
         late final mediaQueryHorizontalPadding =
-        mediaQuery.padding.copyWith(top: 0, bottom: 0);
+            mediaQuery.padding.copyWith(top: 0, bottom: 0);
         late final mediaQueryVerticalPadding =
-        mediaQuery.padding.copyWith(left: 0, right: 0);
+            mediaQuery.padding.copyWith(left: 0, right: 0);
         // Consume the main axis padding with SliverPadding.
         effectivePadding = scrollDirection == Axis.vertical
             ? mediaQueryVerticalPadding

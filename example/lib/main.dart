@@ -37,7 +37,7 @@ class Example extends StatelessWidget {
             title: const Text('Simple Example'),
             subtitle: const Text(
               'A simple example that uses an Infinite List '
-                  'in a StatefulWidget.',
+              'in a StatefulWidget.',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),
@@ -50,8 +50,8 @@ class Example extends StatelessWidget {
             title: const Text('Centralized Example'),
             subtitle: const Text(
               'An example that uses an Infinite List '
-                  'in a StatefulWidget and centralizes the loading, '
-                  'empty and error states.',
+              'in a StatefulWidget and centralizes the loading, '
+              'empty and error states.',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),
@@ -62,7 +62,7 @@ class Example extends StatelessWidget {
             title: const Text('Advanced Example'),
             subtitle: const Text(
               'An advanced example that uses an Infinite List '
-                  'in combination with a Cubit from the Bloc package.',
+              'in combination with a Cubit from the Bloc package.',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),
@@ -85,7 +85,7 @@ class Example extends StatelessWidget {
             title: const Text('Simple Grid Example'),
             subtitle: const Text(
               'A simple example that uses an Infinite Grid '
-                  'in a StatefulWidget.',
+              'in a StatefulWidget.',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),
@@ -96,7 +96,7 @@ class Example extends StatelessWidget {
             title: const Text('Simple Grid Example'),
             subtitle: const Text(
               'A simple example that uses an Infinite Grid '
-                  'in a StatefulWidget.',
+              'in a StatefulWidget.',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),
