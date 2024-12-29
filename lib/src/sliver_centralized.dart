@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 /// This is useful for centering a child in a [CustomScrollView].
 /// {@endtemplate}
 class SliverCentralized extends StatefulWidget {
-  /// Constructs a [SliverCentralized]. <br />
+  /// Constructs a [SliverCentralized].
   /// {@macro sliver_centralized}
   const SliverCentralized({
     required this.child,
