@@ -27,7 +27,6 @@ class SliverInfiniteGrid extends StatefulWidget {
     this.centerEmpty = false,
     this.loadingBuilder,
     this.errorBuilder,
-    this.separatorBuilder,
     this.emptyBuilder,
     this.findChildIndexCallback,
   });
@@ -58,9 +57,6 @@ class SliverInfiniteGrid extends StatefulWidget {
 
   /// {@macro error_builder}
   final WidgetBuilder? errorBuilder;
-
-  /// {@macro separator_builder}
-  final IndexedWidgetBuilder? separatorBuilder;
 
   /// {@macro item_builder}
   final ItemBuilder itemBuilder;
@@ -139,12 +135,9 @@ class _SliverInfiniteGridState extends State<SliverInfiniteGrid> {
         widget.itemCount == 0 &&
         widget.emptyBuilder != null;
     final showBottomWidget = showEmpty || widget.isLoading || widget.hasError;
-    final showSeparator = widget.separatorBuilder != null;
-    final separatorCount = !showSeparator ? 0 : widget.itemCount - 1;
 
     final effectiveItemCount =
-        (!hasItems ? 0 : widget.itemCount + separatorCount) +
-            (showBottomWidget ? 1 : 0);
+        (!hasItems ? 0 : widget.itemCount) + (showBottomWidget ? 1 : 0);
     final lastItemIndex = effectiveItemCount - 1;
 
     Widget? centeredSliver;
@@ -176,12 +169,7 @@ class _SliverInfiniteGridState extends State<SliverInfiniteGrid> {
               return widget.emptyBuilder!(context);
             }
           } else {
-            final itemIndex = !showSeparator ? index : (index / 2).floor();
-            if (showSeparator && index.isOdd) {
-              return widget.separatorBuilder!(context, itemIndex);
-            } else {
-              return widget.itemBuilder(context, itemIndex);
-            }
+            return widget.itemBuilder(context, index);
           }
         },
       ),
