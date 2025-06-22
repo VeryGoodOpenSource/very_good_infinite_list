@@ -132,6 +132,12 @@ InfiniteList<String>(
   // Is set to `false` by default.
   reverse: false,
 
+  // Indicates if the extent of the ScrollView in the scrollDirection
+  // should be determined by the contents being viewed.
+  //
+  // Is set to `false` by default.
+  shrinkWrap: false,
+
   // The duration with which calls to [onFetchData] will be debounced.
   //
   // Is set to a duration of 100 milliseconds by default.
