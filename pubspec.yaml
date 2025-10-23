@@ -10,8 +10,8 @@ documentation: https://github.com/VeryGoodOpenSource/very_good_infinite_list
 topics: [flutter, list-view, scroll, widgets]
 
 environment:
-  sdk: ^3.5.0
-  flutter: ">=3.24.0"
+  sdk: ^3.9.0
+  flutter: ^3.35.0
 
 dependencies:
   flutter:
@@ -20,4 +20,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: ">=7.0.0 <11.0.0"
+  very_good_analysis: ^10.0.0
