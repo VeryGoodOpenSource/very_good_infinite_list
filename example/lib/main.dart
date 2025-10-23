@@ -67,8 +67,8 @@ class Example extends StatelessWidget {
           const Divider(),
           ListTile(
             isThreeLine: true,
-            onTap: () {
-              Navigator.of(context).push(SliverExample.route());
+            onTap: () async {
+              await Navigator.of(context).push(SliverExample.route());
             },
             title: const Text('Sliver Example'),
             subtitle: const Text(

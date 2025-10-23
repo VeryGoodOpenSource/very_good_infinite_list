@@ -102,31 +102,40 @@ void main() {
           ),
         );
 
-        final sliverPadding =
-            tester.widget<SliverPadding>(find.byType(SliverPadding));
+        final sliverPadding = tester.widget<SliverPadding>(
+          find.byType(SliverPadding),
+        );
         expect(sliverPadding.padding, equals(padding));
       },
     );
 
-    testWidgets('passes findChildIndexCallback to internal SliverList.delegate',
-        (tester) async {
-      await tester.pumpApp(
-        InfiniteList(
-          itemCount: 2,
-          onFetchData: emptyCallback,
-          itemBuilder: (_, i) => Text('$i', key: ValueKey('key_$i')),
-          findChildIndexCallback: (key) {
-            final valueKey = key as ValueKey;
-            final keyId = valueKey.value as String;
-            return int.parse(keyId.split('_')[1]);
-          },
-        ),
-      );
+    testWidgets(
+      'passes findChildIndexCallback to internal SliverList.delegate',
+      (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 2,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i', key: ValueKey('key_$i')),
+            findChildIndexCallback: (key) {
+              final valueKey = key as ValueKey;
+              final keyId = valueKey.value as String;
+              return int.parse(keyId.split('_')[1]);
+            },
+          ),
+        );
 
-      final sliverList = tester.widget<SliverList>(find.byType(SliverList));
-      expect(sliverList.delegate.findIndexByKey(const Key('key_0')), equals(0));
-      expect(sliverList.delegate.findIndexByKey(const Key('key_1')), equals(1));
-    });
+        final sliverList = tester.widget<SliverList>(find.byType(SliverList));
+        expect(
+          sliverList.delegate.findIndexByKey(const Key('key_0')),
+          equals(0),
+        );
+        expect(
+          sliverList.delegate.findIndexByKey(const Key('key_1')),
+          equals(1),
+        );
+      },
+    );
 
     testWidgets(
       'uses media query padding when padding is omitted',
@@ -150,8 +159,9 @@ void main() {
           ),
         );
 
-        final sliverPadding =
-            tester.widget<SliverPadding>(find.byType(SliverPadding));
+        final sliverPadding = tester.widget<SliverPadding>(
+          find.byType(SliverPadding),
+        );
         expect(sliverPadding.padding, equals(padding));
       },
     );
@@ -194,7 +204,7 @@ void main() {
           InfiniteList(
             itemCount: itemCount,
             onFetchData: emptyCallback,
-            separatorBuilder: (_, __) {
+            separatorBuilder: (_, _) {
               separatorBuilderCalls++;
               return const Divider();
             },
@@ -354,8 +364,9 @@ void main() {
           ),
         );
 
-        final customScrollView =
-            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        final customScrollView = tester.widget<CustomScrollView>(
+          find.byType(CustomScrollView),
+        );
         expect(customScrollView.scrollDirection, equals(Axis.horizontal));
       });
 
@@ -370,8 +381,9 @@ void main() {
           ),
         );
 
-        final customScrollView =
-            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        final customScrollView = tester.widget<CustomScrollView>(
+          find.byType(CustomScrollView),
+        );
         expect(customScrollView.controller, scrollController);
       });
 
@@ -386,8 +398,9 @@ void main() {
           ),
         );
 
-        final customScrollView =
-            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        final customScrollView = tester.widget<CustomScrollView>(
+          find.byType(CustomScrollView),
+        );
         expect(customScrollView.physics, physics);
       });
 
@@ -402,8 +415,9 @@ void main() {
           ),
         );
 
-        final customScrollView =
-            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        final customScrollView = tester.widget<CustomScrollView>(
+          find.byType(CustomScrollView),
+        );
         expect(customScrollView.reverse, reverse);
       });
     });
@@ -472,7 +486,7 @@ void main() {
               dimension: 40,
               child: ColoredBox(color: colors[i % colors.length]),
             ),
-            separatorBuilder: (_, __) => const SizedBox.square(
+            separatorBuilder: (_, _) => const SizedBox.square(
               dimension: 10,
               child: ColoredBox(color: Colors.pink),
             ),
@@ -514,7 +528,7 @@ void main() {
               dimension: 40,
               child: ColoredBox(color: colors[i % colors.length]),
             ),
-            separatorBuilder: (_, __) => const SizedBox.square(
+            separatorBuilder: (_, _) => const SizedBox.square(
               dimension: 10,
               child: ColoredBox(color: Colors.pink),
             ),
@@ -559,7 +573,7 @@ void main() {
               dimension: 40,
               child: ColoredBox(color: colors[i % colors.length]),
             ),
-            separatorBuilder: (_, __) => const SizedBox.square(
+            separatorBuilder: (_, _) => const SizedBox.square(
               dimension: 10,
               child: ColoredBox(color: Colors.pink),
             ),
@@ -602,7 +616,7 @@ void main() {
               dimension: 40,
               child: ColoredBox(color: colors[i % colors.length]),
             ),
-            separatorBuilder: (_, __) => const SizedBox.square(
+            separatorBuilder: (_, _) => const SizedBox.square(
               dimension: 10,
               child: ColoredBox(color: Colors.pink),
             ),
