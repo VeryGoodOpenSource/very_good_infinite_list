@@ -406,6 +406,36 @@ void main() {
             tester.widget<CustomScrollView>(find.byType(CustomScrollView));
         expect(customScrollView.reverse, reverse);
       });
+
+      testWidgets('shrinkWrap', (tester) async {
+        const shrinkWrap = true;
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+            shrinkWrap: shrinkWrap,
+          ),
+        );
+
+        final customScrollView =
+            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        expect(customScrollView.shrinkWrap, shrinkWrap);
+      });
+
+      testWidgets('shrinkWrap defaults to false', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        final customScrollView =
+            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        expect(customScrollView.shrinkWrap, false);
+      });
     });
 
     group('centralized properties', () {

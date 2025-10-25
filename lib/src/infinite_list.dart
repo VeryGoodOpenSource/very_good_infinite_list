@@ -32,6 +32,7 @@ class InfiniteList extends StatelessWidget {
     this.cacheExtent,
     this.debounceDuration = defaultDebounceDuration,
     this.reverse = false,
+    this.shrinkWrap = false,
     this.isLoading = false,
     this.hasError = false,
     this.hasReachedMax = false,
@@ -76,6 +77,14 @@ class InfiniteList extends StatelessWidget {
   /// will be rendered from bottom to top.
   /// {@endtemplate}
   final bool reverse;
+
+  /// Indicates if the extent of the [ScrollView] in the [scrollDirection]
+  /// should be determined by the contents being viewed.
+  ///
+  /// See also:
+  ///
+  /// * [CustomScrollView.shrinkWrap], for more details about this flag.
+  final bool shrinkWrap;
 
   /// {@template item_count}
   /// The amount of items that need to be rendered by the [itemBuilder].
@@ -207,6 +216,7 @@ class InfiniteList extends StatelessWidget {
     return CustomScrollView(
       scrollDirection: scrollDirection,
       reverse: reverse,
+      shrinkWrap: shrinkWrap,
       controller: scrollController,
       physics: physics,
       cacheExtent: cacheExtent,
