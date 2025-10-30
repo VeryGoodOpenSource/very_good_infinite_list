@@ -204,8 +204,8 @@ InfiniteList<String>(
 
 Refer to the [example](https://github.com/VeryGoodOpenSource/very_good_infinite_list/blob/main/example/lib/main.dart) to see both basic and complex usage of `InfiniteList`.
 
-[ci_badge]: https://github.com/VeryGoodOpenSource/very_good_infinite_list/workflows/ci/badge.svg
-[ci_link]: https://github.com/VeryGoodOpenSource/very_good_infinite_list/actions
+[ci_badge]: https://github.com/VeryGoodOpenSource/very_good_infinite_list/actions/workflows/main.yaml/badge.svg?branch=main
+[ci_link]: https://github.com/VeryGoodOpenSource/very_good_infinite_list/actions/workflows/main.yaml?query=branch%3Amain
 [coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/very_good_infinite_list/main/coverage_badge.svg
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
