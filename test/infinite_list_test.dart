@@ -434,7 +434,7 @@ void main() {
 
         final customScrollView =
             tester.widget<CustomScrollView>(find.byType(CustomScrollView));
-        expect(customScrollView.shrinkWrap, false);
+        expect(customScrollView.shrinkWrap, isFalse);
       });
     });
 
