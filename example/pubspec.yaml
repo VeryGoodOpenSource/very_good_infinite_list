@@ -5,7 +5,8 @@ publish_to: none
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.9.0
+  flutter: ^3.35.0
 
 dependencies:
   bloc: ^9.0.0
@@ -19,7 +20,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: ^7.0.0
+  very_good_analysis: ^10.0.0
 
 flutter:
   uses-material-design: true
