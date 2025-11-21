@@ -1,7 +1,9 @@
 import 'package:example/advanced/advanced_example.dart';
 import 'package:example/centralized/centralized_examples.dart';
 import 'package:example/simple/simple_example.dart';
+import 'package:example/simple/simple_grid_example.dart';
 import 'package:example/sliver/sliver_example.dart';
+import 'package:example/sliver/sliver_grid_example.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -73,6 +75,28 @@ class Example extends StatelessWidget {
             title: const Text('Sliver Example'),
             subtitle: const Text(
               'An example in a sliver',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+          ),
+          const Divider(),
+          ListTile(
+            isThreeLine: true,
+            onTap: () => Navigator.of(context).push(SimpleGridExample.route()),
+            title: const Text('Simple Grid Example'),
+            subtitle: const Text(
+              'A simple example that uses an Infinite Grid '
+              'in a StatefulWidget.',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+          ),
+          const Divider(),
+          ListTile(
+            isThreeLine: true,
+            onTap: () => Navigator.of(context).push(SliverGridExample.route()),
+            title: const Text('Simple Grid Example'),
+            subtitle: const Text(
+              'A simple example that uses an Infinite Grid '
+              'in a StatefulWidget.',
             ),
             trailing: const Icon(Icons.chevron_right),
           ),
