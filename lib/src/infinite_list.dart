@@ -269,20 +269,26 @@ class _ContextualSliverPadding extends StatelessWidget {
     if (padding == null) {
       if (mediaQuery != null) {
         // Automatically pad sliver with padding from MediaQuery.
-        late final mediaQueryHorizontalPadding =
-            mediaQuery.padding.copyWith(top: 0, bottom: 0);
-        late final mediaQueryVerticalPadding =
-            mediaQuery.padding.copyWith(left: 0, right: 0);
+        late final mediaQueryHorizontalPadding = mediaQuery.padding.copyWith(
+          top: 0,
+          bottom: 0,
+        );
+        late final mediaQueryVerticalPadding = mediaQuery.padding.copyWith(
+          left: 0,
+          right: 0,
+        );
         // Consume the main axis padding with SliverPadding.
-        effectivePadding = scrollDirection == Axis.vertical
-            ? mediaQueryVerticalPadding
-            : mediaQueryHorizontalPadding;
+        effectivePadding =
+            scrollDirection == Axis.vertical
+                ? mediaQueryVerticalPadding
+                : mediaQueryHorizontalPadding;
         // Leave behind the cross axis padding.
         sliver = MediaQuery(
           data: mediaQuery.copyWith(
-            padding: scrollDirection == Axis.vertical
-                ? mediaQueryHorizontalPadding
-                : mediaQueryVerticalPadding,
+            padding:
+                scrollDirection == Axis.vertical
+                    ? mediaQueryHorizontalPadding
+                    : mediaQueryVerticalPadding,
           ),
           child: sliver,
         );

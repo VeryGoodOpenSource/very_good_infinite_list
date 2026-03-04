@@ -8,10 +8,7 @@ import 'package:flutter/material.dart';
 class SliverCentralized extends StatefulWidget {
   /// Constructs a [SliverCentralized].
   /// {@macro sliver_centralized}
-  const SliverCentralized({
-    required this.child,
-    super.key,
-  });
+  const SliverCentralized({required this.child, super.key});
 
   /// The widget below this widget in the tree.
   final Widget child;
@@ -25,9 +22,7 @@ class _SliverCentralizedState extends State<SliverCentralized> {
   Widget build(BuildContext context) {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: Center(
-        child: widget.child,
-      ),
+      child: Center(child: widget.child),
     );
   }
 }
