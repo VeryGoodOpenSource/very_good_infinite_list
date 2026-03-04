@@ -11,6 +11,11 @@ Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 [![License: MIT][license_badge]][license_link]
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_badge_link]
 
+> [!NOTE]
+> There is an active proposal to integrate this package's functionality directly
+> into the Flutter framework. Follow the conversation and share your feedback in
+> [flutter/flutter#177451](https://github.com/flutter/flutter/issues/177451).
+
 ---
 
 A library for easily displaying paginated data, created by [Very Good Ventures][very_good_ventures_link].
