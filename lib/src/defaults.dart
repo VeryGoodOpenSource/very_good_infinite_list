@@ -7,17 +7,13 @@ typedef ItemBuilder = Widget Function(BuildContext context, int index);
 /// Default value to [InfiniteList.loadingBuilder].
 /// Renders a centered [CircularProgressIndicator].
 Widget defaultInfiniteListLoadingBuilder(BuildContext buildContext) {
-  return const Center(
-    child: CircularProgressIndicator(),
-  );
+  return const Center(child: CircularProgressIndicator());
 }
 
 /// Default value to [InfiniteList.loadingBuilder].
 /// Renders a centered [Text] "error".
 Widget defaultInfiniteListErrorBuilder(BuildContext buildContext) {
-  return const Center(
-    child: Text('Error'),
-  );
+  return const Center(child: Text('Error'));
 }
 
 /// Default value to [InfiniteList.debounceDuration].

@@ -131,7 +131,8 @@ class _SliverInfiniteListState extends State<SliverInfiniteList> {
   Widget build(BuildContext context) {
     final hasItems = widget.itemCount != 0;
 
-    final showEmpty = !widget.isLoading &&
+    final showEmpty =
+        !widget.isLoading &&
         widget.itemCount == 0 &&
         widget.emptyBuilder != null;
     final showBottomWidget = showEmpty || widget.isLoading || widget.hasError;
@@ -140,7 +141,7 @@ class _SliverInfiniteListState extends State<SliverInfiniteList> {
 
     final effectiveItemCount =
         (!hasItems ? 0 : widget.itemCount + separatorCount) +
-            (showBottomWidget ? 1 : 0);
+        (showBottomWidget ? 1 : 0);
     final lastItemIndex = effectiveItemCount - 1;
 
     Widget? centeredSliver;
