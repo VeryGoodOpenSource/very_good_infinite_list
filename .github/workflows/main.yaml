@@ -23,11 +23,12 @@ jobs:
       modified_files_only: false
 
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@623d6f16fd2bdacb4304de33c4182f73c71d3f25
     with:
       runs_on: macos-latest
       flutter_channel: stable
       flutter_version: "3.41.x"
+      show_uncovered: true
       package_get_excludes: example
 
   pana_score:
