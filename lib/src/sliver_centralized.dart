@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 /// {@template sliver_centralized}
 /// A sliver that centers its child and fills the remaining space.

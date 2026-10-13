@@ -1,12 +1,20 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 extension on WidgetTester {
   Future<void> pumpApp(Widget widget) async {
     await pumpWidget(
-      MaterialApp(
-        home: Scaffold(backgroundColor: Colors.transparent, body: widget),
+      WidgetsApp(
+        color: const Color(0xFFFFFFFF),
+        debugShowCheckedModeBanner: false,
+        builder:
+            (context, _) => ScrollConfiguration(
+              behavior: ScrollConfiguration.of(
+                context,
+              ).copyWith(overscroll: false),
+              child: RepaintBoundary(child: widget),
+            ),
       ),
     );
     await pump();
@@ -24,6 +32,7 @@ void main() {
       Future<void> rebuild() async {
         await tester.tap(find.byKey(key));
         await tester.pumpAndSettle();
+        await tester.pump(defaultDebounceDuration);
       }
 
       var itemCount = 3;
@@ -36,9 +45,9 @@ void main() {
           builder: (context, setState) {
             return Column(
               children: [
-                TextButton(
+                GestureDetector(
                   key: key,
-                  onPressed: () => setState(() {}),
+                  onTap: () => setState(() {}),
                   child: const Text('REBUILD'),
                 ),
                 Expanded(
@@ -190,7 +199,7 @@ void main() {
           onFetchData: emptyCallback,
           separatorBuilder: (_, __) {
             separatorBuilderCalls++;
-            return const Divider();
+            return const SizedBox(height: 16);
           },
           itemBuilder: (_, i) => Text('$i'),
         ),
@@ -211,7 +220,7 @@ void main() {
           onFetchData: emptyCallback,
           separatorBuilder: (_, index) {
             indexes.add(index);
-            return const Divider();
+            return const SizedBox(height: 16);
           },
           itemBuilder: (_, i) => Text('$i'),
         ),
@@ -297,7 +306,7 @@ void main() {
           ),
         );
 
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.byType(InfiniteListLoadingIndicator), findsOneWidget);
       });
 
       testWidgets('renders custom loadingBuilder', (tester) async {
@@ -459,7 +468,7 @@ void main() {
           ),
         );
 
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.byType(InfiniteListLoadingIndicator), findsOneWidget);
       });
     });
 
@@ -473,7 +482,11 @@ void main() {
         (tester) async {
           const path = 'successful_vertical_scroll';
 
-          const colors = [Colors.red, Colors.green, Colors.blue];
+          const colors = [
+            Color(0xFFF44336),
+            Color(0xFF4CAF50),
+            Color(0xFF2196F3),
+          ];
           final subject = InfiniteList(
             onFetchData: emptyCallback,
             isLoading: true,
@@ -486,7 +499,7 @@ void main() {
             separatorBuilder:
                 (_, __) => const SizedBox.square(
                   dimension: 10,
-                  child: ColoredBox(color: Colors.pink),
+                  child: ColoredBox(color: Color(0xFFE91E63)),
                 ),
           );
           await tester.pumpApp(subject);
@@ -516,7 +529,11 @@ void main() {
         (tester) async {
           const path = 'successful_horizontal_scroll';
 
-          const colors = [Colors.red, Colors.green, Colors.blue];
+          const colors = [
+            Color(0xFFF44336),
+            Color(0xFF4CAF50),
+            Color(0xFF2196F3),
+          ];
           final subject = InfiniteList(
             onFetchData: emptyCallback,
             isLoading: true,
@@ -530,7 +547,7 @@ void main() {
             separatorBuilder:
                 (_, __) => const SizedBox.square(
                   dimension: 10,
-                  child: ColoredBox(color: Colors.pink),
+                  child: ColoredBox(color: Color(0xFFE91E63)),
                 ),
           );
           await tester.pumpApp(subject);
@@ -562,7 +579,11 @@ void main() {
         (tester) async {
           const path = 'successful_horizontally_scroll_with_centered_loading';
 
-          const colors = [Colors.red, Colors.green, Colors.blue];
+          const colors = [
+            Color(0xFFF44336),
+            Color(0xFF4CAF50),
+            Color(0xFF2196F3),
+          ];
           final subject = InfiniteList(
             onFetchData: emptyCallback,
             isLoading: true,
@@ -577,7 +598,7 @@ void main() {
             separatorBuilder:
                 (_, __) => const SizedBox.square(
                   dimension: 10,
-                  child: ColoredBox(color: Colors.pink),
+                  child: ColoredBox(color: Color(0xFFE91E63)),
                 ),
           );
           await tester.pumpApp(subject);
@@ -608,7 +629,11 @@ void main() {
         (tester) async {
           const path = 'successful_vertically_scroll_with_centered_loading';
 
-          const colors = [Colors.red, Colors.green, Colors.blue];
+          const colors = [
+            Color(0xFFF44336),
+            Color(0xFF4CAF50),
+            Color(0xFF2196F3),
+          ];
           final subject = InfiniteList(
             onFetchData: emptyCallback,
             isLoading: true,
@@ -622,7 +647,7 @@ void main() {
             separatorBuilder:
                 (_, __) => const SizedBox.square(
                   dimension: 10,
-                  child: ColoredBox(color: Colors.pink),
+                  child: ColoredBox(color: Color(0xFFE91E63)),
                 ),
           );
           await tester.pumpApp(subject);

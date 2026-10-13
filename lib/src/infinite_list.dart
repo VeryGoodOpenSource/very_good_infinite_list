@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:very_good_infinite_list/src/defaults.dart';
 import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 
@@ -172,8 +172,7 @@ class InfiniteList extends StatelessWidget {
   /// An optional builder that, when provided, is used to show a widget in
   /// between every pair of items.
   ///
-  /// If the [itemBuilder] returns a [ListTile], this is commonly used to render
-  /// a [Divider] between every tile.
+  /// For example, it can be used to render a divider between every item.
   /// {@endtemplate}
   final IndexedWidgetBuilder? separatorBuilder;
 
