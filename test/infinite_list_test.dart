@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
@@ -416,6 +417,40 @@ void main() {
         );
         expect(customScrollView.shrinkWrap, isFalse);
       });
+
+      testWidgets('cacheExtent', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+            cacheExtent: 100,
+          ),
+        );
+
+        final customScrollView = tester.widget<CustomScrollView>(
+          find.byType(CustomScrollView),
+        );
+        expect(
+          customScrollView.scrollCacheExtent,
+          const ScrollCacheExtent.pixels(100),
+        );
+      });
+
+      testWidgets('cacheExtent defaults to null', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        final customScrollView = tester.widget<CustomScrollView>(
+          find.byType(CustomScrollView),
+        );
+        expect(customScrollView.scrollCacheExtent, isNull);
+      });
     });
 
     group('centralized properties', () {
@@ -478,16 +513,14 @@ void main() {
             onFetchData: emptyCallback,
             isLoading: true,
             itemCount: 30,
-            itemBuilder:
-                (_, i) => SizedBox.square(
-                  dimension: 40,
-                  child: ColoredBox(color: colors[i % colors.length]),
-                ),
-            separatorBuilder:
-                (_, __) => const SizedBox.square(
-                  dimension: 10,
-                  child: ColoredBox(color: Colors.pink),
-                ),
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, __) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Colors.pink),
+            ),
           );
           await tester.pumpApp(subject);
 
@@ -522,16 +555,14 @@ void main() {
             isLoading: true,
             itemCount: 30,
             scrollDirection: Axis.horizontal,
-            itemBuilder:
-                (_, i) => SizedBox.square(
-                  dimension: 40,
-                  child: ColoredBox(color: colors[i % colors.length]),
-                ),
-            separatorBuilder:
-                (_, __) => const SizedBox.square(
-                  dimension: 10,
-                  child: ColoredBox(color: Colors.pink),
-                ),
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, __) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Colors.pink),
+            ),
           );
           await tester.pumpApp(subject);
 
@@ -569,16 +600,14 @@ void main() {
             itemCount: 30,
             centerLoading: true,
             scrollDirection: Axis.horizontal,
-            itemBuilder:
-                (_, i) => SizedBox.square(
-                  dimension: 40,
-                  child: ColoredBox(color: colors[i % colors.length]),
-                ),
-            separatorBuilder:
-                (_, __) => const SizedBox.square(
-                  dimension: 10,
-                  child: ColoredBox(color: Colors.pink),
-                ),
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, __) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Colors.pink),
+            ),
           );
           await tester.pumpApp(subject);
 
@@ -614,16 +643,14 @@ void main() {
             isLoading: true,
             itemCount: 30,
             centerLoading: true,
-            itemBuilder:
-                (_, i) => SizedBox.square(
-                  dimension: 40,
-                  child: ColoredBox(color: colors[i % colors.length]),
-                ),
-            separatorBuilder:
-                (_, __) => const SizedBox.square(
-                  dimension: 10,
-                  child: ColoredBox(color: Colors.pink),
-                ),
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, __) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Colors.pink),
+            ),
           );
           await tester.pumpApp(subject);
 

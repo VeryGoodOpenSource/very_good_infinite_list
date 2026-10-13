@@ -8,10 +8,7 @@ void main() {
   runApp(
     MaterialApp(
       theme: ThemeData(
-        dividerTheme: const DividerThemeData(
-          indent: 16,
-          space: 0,
-        ),
+        dividerTheme: const DividerThemeData(indent: 16, space: 0),
       ),
       home: const Example(),
     ),
@@ -24,9 +21,7 @@ class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Infinite List'),
-      ),
+      appBar: AppBar(title: const Text('Infinite List')),
       body: ListView(
         children: [
           ListTile(
@@ -42,9 +37,8 @@ class Example extends StatelessWidget {
           const Divider(),
           ListTile(
             isThreeLine: true,
-            onTap: () => Navigator.of(context).push(
-              CentralizedExamples.route(),
-            ),
+            onTap: () =>
+                Navigator.of(context).push(CentralizedExamples.route()),
             title: const Text('Centralized Example'),
             subtitle: const Text(
               'An example that uses an Infinite List '
@@ -71,9 +65,7 @@ class Example extends StatelessWidget {
               Navigator.of(context).push(SliverExample.route());
             },
             title: const Text('Sliver Example'),
-            subtitle: const Text(
-              'An example in a sliver',
-            ),
+            subtitle: const Text('An example in a sliver'),
             trailing: const Icon(Icons.chevron_right),
           ),
         ],

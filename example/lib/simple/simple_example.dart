@@ -40,23 +40,16 @@ class SimpleExampleState extends State<SimpleExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Simple Example'),
-      ),
+      appBar: AppBar(title: const Text('Simple Example')),
       body: InfiniteList(
         itemCount: _items.length,
         isLoading: _isLoading,
         onFetchData: _fetchData,
         separatorBuilder: (context, index) {
-          return Divider(
-            color: index.isOdd ? Colors.black : Colors.blue,
-          );
+          return Divider(color: index.isOdd ? Colors.black : Colors.blue);
         },
         itemBuilder: (context, index) {
-          return ListTile(
-            dense: true,
-            title: Text(_items[index]),
-          );
+          return ListTile(dense: true, title: Text(_items[index]));
         },
       ),
     );

@@ -22,9 +22,7 @@ class AdvancedExample extends StatelessWidget {
     final state = context.watch<PeopleCubit>().state;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Advanced Example'),
-      ),
+      appBar: AppBar(title: const Text('Advanced Example')),
       body: Column(
         children: [
           _Header(),
@@ -59,10 +57,7 @@ class _Header extends StatelessWidget {
         color: Colors.white,
         elevation: 2,
         child: Padding(
-          padding: EdgeInsets.only(
-            top: 16,
-            bottom: 8,
-          ),
+          padding: EdgeInsets.only(top: 16, bottom: 8),
           child: Text(
             'A maximum of 24 items can be fetched.',
             textAlign: TextAlign.center,

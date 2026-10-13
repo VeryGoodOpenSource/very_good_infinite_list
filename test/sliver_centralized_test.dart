@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:very_good_infinite_list/src/sliver_centralized.dart';
 
@@ -9,7 +10,12 @@ extension on WidgetTester {
         home: Scaffold(
           body: SizedBox(
             height: 500,
-            child: CustomScrollView(cacheExtent: cacheExtent, slivers: slivers),
+            child: CustomScrollView(
+              scrollCacheExtent: cacheExtent == null
+                  ? null
+                  : ScrollCacheExtent.pixels(cacheExtent),
+              slivers: slivers,
+            ),
           ),
         ),
       ),

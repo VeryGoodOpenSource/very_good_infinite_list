@@ -16,21 +16,11 @@ class PeopleCubit extends Cubit<PeopleState> {
   }
 
   Future<void> loadData() async {
-    emit(
-      PeopleState(
-        values: state.values,
-        isLoading: true,
-      ),
-    );
+    emit(PeopleState(values: state.values, isLoading: true));
     await Future<void>.delayed(const Duration(milliseconds: 500));
 
     if (state.values.length >= 24) {
-      emit(
-        PeopleState(
-          values: state.values,
-          hasReachedMax: true,
-        ),
-      );
+      emit(PeopleState(values: state.values, hasReachedMax: true));
       return;
     }
 
