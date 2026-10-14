@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:very_good_infinite_list/src/sliver_infinite_list.dart';
 
@@ -10,9 +10,12 @@ extension on WidgetTester {
     double height = 500,
   }) async {
     await pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SizedBox(
+      WidgetsApp(
+        color: const Color(0xFFFFFFFF),
+        debugShowCheckedModeBanner: false,
+        builder: (_, _) => Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
             height: height,
             child: CustomScrollView(
               scrollCacheExtent: cacheExtent == null
@@ -63,11 +66,7 @@ void main() {
         var itemCount = 0;
         var onFetchDataCalls = 0;
         await tester.pumpSlivers(cacheExtent: 0, [
-          const SliverAppBar(
-            expandedHeight: 500,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(title: Text('title')),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 500)),
           StatefulBuilder(
             builder: (context, setState) {
               return SliverInfiniteList(
