@@ -45,9 +45,7 @@ class SliverExampleState extends State<SliverExample> {
           const SliverAppBar(
             expandedHeight: 400,
             pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text('Sliver Example'),
-            ),
+            flexibleSpace: FlexibleSpaceBar(title: Text('Sliver Example')),
           ),
           SliverInfiniteList(
             itemCount: _items.length,
@@ -55,10 +53,7 @@ class SliverExampleState extends State<SliverExample> {
             onFetchData: _fetchData,
             separatorBuilder: (context, _) => const Divider(),
             itemBuilder: (context, index) {
-              return ListTile(
-                dense: true,
-                title: Text(_items[index]),
-              );
+              return ListTile(dense: true, title: Text(_items[index]));
             },
           ),
         ],

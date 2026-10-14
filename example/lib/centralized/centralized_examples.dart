@@ -31,27 +31,18 @@ class _CentralizedExamplesState extends State<CentralizedExamples>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Centralized Examples'),
-        bottom: TabBar(
-          tabs: tabs,
-          controller: tabBarController,
-        ),
+        bottom: TabBar(tabs: tabs, controller: tabBarController),
       ),
       body: TabBarView(
         controller: tabBarController,
-        children: [
-          _LoadingExample(),
-          _EmptyExample(),
-          _ErrorExample(),
-        ],
+        children: [_LoadingExample(), _EmptyExample(), _ErrorExample()],
       ),
     );
   }
 }
 
 Widget _buildItem(BuildContext context, int index) {
-  return ListTile(
-    title: Text('Item $index'),
-  );
+  return ListTile(title: Text('Item $index'));
 }
 
 class _LoadingExample extends StatelessWidget {
@@ -78,10 +69,8 @@ class _EmptyExample extends StatelessWidget {
     return InfiniteList(
       itemCount: 0,
       centerEmpty: true,
-      emptyBuilder: (_) => const Text(
-        'No items',
-        style: TextStyle(fontSize: 20),
-      ),
+      emptyBuilder: (_) =>
+          const Text('No items', style: TextStyle(fontSize: 20)),
       onFetchData: () async {},
       itemBuilder: _buildItem,
     );
@@ -95,11 +84,7 @@ class _ErrorExample extends StatelessWidget {
       itemCount: 0,
       hasError: true,
       centerError: true,
-      errorBuilder: (_) => const Icon(
-        Icons.error,
-        size: 60,
-        color: Colors.red,
-      ),
+      errorBuilder: (_) => const Icon(Icons.error, size: 60, color: Colors.red),
       onFetchData: () async {},
       itemBuilder: _buildItem,
     );

@@ -21,6 +21,6 @@ jobs:
     with:
       runs_on: macos-latest
       flutter_channel: stable
-      flutter_version: "3.41.x"
+      flutter_version: "3.47.x"
       working_directory: example
       min_coverage: 0
