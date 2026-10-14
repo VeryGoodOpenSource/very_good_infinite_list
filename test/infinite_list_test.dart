@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
@@ -8,13 +9,10 @@ extension on WidgetTester {
       WidgetsApp(
         color: const Color(0xFFFFFFFF),
         debugShowCheckedModeBanner: false,
-        builder:
-            (context, _) => ScrollConfiguration(
-              behavior: ScrollConfiguration.of(
-                context,
-              ).copyWith(overscroll: false),
-              child: RepaintBoundary(child: widget),
-            ),
+        builder: (context, _) => ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+          child: RepaintBoundary(child: widget),
+        ),
       ),
     );
     await pump();
@@ -197,7 +195,7 @@ void main() {
         InfiniteList(
           itemCount: itemCount,
           onFetchData: emptyCallback,
-          separatorBuilder: (_, __) {
+          separatorBuilder: (_, _) {
             separatorBuilderCalls++;
             return const SizedBox(height: 16);
           },
@@ -425,6 +423,40 @@ void main() {
         );
         expect(customScrollView.shrinkWrap, isFalse);
       });
+
+      testWidgets('cacheExtent', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+            cacheExtent: 100,
+          ),
+        );
+
+        final customScrollView = tester.widget<CustomScrollView>(
+          find.byType(CustomScrollView),
+        );
+        expect(
+          customScrollView.scrollCacheExtent,
+          const ScrollCacheExtent.pixels(100),
+        );
+      });
+
+      testWidgets('cacheExtent defaults to null', (tester) async {
+        await tester.pumpApp(
+          InfiniteList(
+            itemCount: 10,
+            onFetchData: emptyCallback,
+            itemBuilder: (_, i) => Text('$i'),
+          ),
+        );
+
+        final customScrollView = tester.widget<CustomScrollView>(
+          find.byType(CustomScrollView),
+        );
+        expect(customScrollView.scrollCacheExtent, isNull);
+      });
     });
 
     group('centralized properties', () {
@@ -491,16 +523,14 @@ void main() {
             onFetchData: emptyCallback,
             isLoading: true,
             itemCount: 30,
-            itemBuilder:
-                (_, i) => SizedBox.square(
-                  dimension: 40,
-                  child: ColoredBox(color: colors[i % colors.length]),
-                ),
-            separatorBuilder:
-                (_, __) => const SizedBox.square(
-                  dimension: 10,
-                  child: ColoredBox(color: Color(0xFFE91E63)),
-                ),
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, _) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Color(0xFFE91E63)),
+            ),
           );
           await tester.pumpApp(subject);
 
@@ -539,16 +569,14 @@ void main() {
             isLoading: true,
             itemCount: 30,
             scrollDirection: Axis.horizontal,
-            itemBuilder:
-                (_, i) => SizedBox.square(
-                  dimension: 40,
-                  child: ColoredBox(color: colors[i % colors.length]),
-                ),
-            separatorBuilder:
-                (_, __) => const SizedBox.square(
-                  dimension: 10,
-                  child: ColoredBox(color: Color(0xFFE91E63)),
-                ),
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, _) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Color(0xFFE91E63)),
+            ),
           );
           await tester.pumpApp(subject);
 
@@ -590,16 +618,14 @@ void main() {
             itemCount: 30,
             centerLoading: true,
             scrollDirection: Axis.horizontal,
-            itemBuilder:
-                (_, i) => SizedBox.square(
-                  dimension: 40,
-                  child: ColoredBox(color: colors[i % colors.length]),
-                ),
-            separatorBuilder:
-                (_, __) => const SizedBox.square(
-                  dimension: 10,
-                  child: ColoredBox(color: Color(0xFFE91E63)),
-                ),
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, _) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Color(0xFFE91E63)),
+            ),
           );
           await tester.pumpApp(subject);
 
@@ -639,16 +665,14 @@ void main() {
             isLoading: true,
             itemCount: 30,
             centerLoading: true,
-            itemBuilder:
-                (_, i) => SizedBox.square(
-                  dimension: 40,
-                  child: ColoredBox(color: colors[i % colors.length]),
-                ),
-            separatorBuilder:
-                (_, __) => const SizedBox.square(
-                  dimension: 10,
-                  child: ColoredBox(color: Color(0xFFE91E63)),
-                ),
+            itemBuilder: (_, i) => SizedBox.square(
+              dimension: 40,
+              child: ColoredBox(color: colors[i % colors.length]),
+            ),
+            separatorBuilder: (_, _) => const SizedBox.square(
+              dimension: 10,
+              child: ColoredBox(color: Color(0xFFE91E63)),
+            ),
           );
           await tester.pumpApp(subject);
 

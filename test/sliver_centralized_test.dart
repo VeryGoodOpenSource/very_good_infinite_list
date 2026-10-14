@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:very_good_infinite_list/src/sliver_centralized.dart';
@@ -8,17 +9,18 @@ extension on WidgetTester {
       WidgetsApp(
         color: const Color(0xFFFFFFFF),
         debugShowCheckedModeBanner: false,
-        builder:
-            (_, __) => Align(
-              alignment: Alignment.topCenter,
-              child: SizedBox(
-                height: 500,
-                child: CustomScrollView(
-                  cacheExtent: cacheExtent,
-                  slivers: slivers,
-                ),
-              ),
+        builder: (_, _) => Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: 500,
+            child: CustomScrollView(
+              scrollCacheExtent: cacheExtent == null
+                  ? null
+                  : ScrollCacheExtent.pixels(cacheExtent),
+              slivers: slivers,
             ),
+          ),
+        ),
       ),
     );
     await pump();

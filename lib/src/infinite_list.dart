@@ -138,7 +138,9 @@ class InfiniteList extends StatelessWidget {
   /// {@endtemplate}
   final VoidCallback onFetchData;
 
-  /// See [RenderViewportBase.cacheExtent]
+  /// The viewport's cache extent, in pixels.
+  ///
+  /// See [RenderViewportBase.scrollCacheExtent].
   final double? cacheExtent;
 
   /// {@template padding}
@@ -212,13 +214,16 @@ class InfiniteList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cacheExtent = this.cacheExtent;
     return CustomScrollView(
       scrollDirection: scrollDirection,
       reverse: reverse,
       shrinkWrap: shrinkWrap,
       controller: scrollController,
       physics: physics,
-      cacheExtent: cacheExtent,
+      scrollCacheExtent: cacheExtent == null
+          ? null
+          : ScrollCacheExtent.pixels(cacheExtent),
       slivers: [
         _ContextualSliverPadding(
           padding: padding,
@@ -277,17 +282,15 @@ class _ContextualSliverPadding extends StatelessWidget {
           right: 0,
         );
         // Consume the main axis padding with SliverPadding.
-        effectivePadding =
-            scrollDirection == Axis.vertical
-                ? mediaQueryVerticalPadding
-                : mediaQueryHorizontalPadding;
+        effectivePadding = scrollDirection == Axis.vertical
+            ? mediaQueryVerticalPadding
+            : mediaQueryHorizontalPadding;
         // Leave behind the cross axis padding.
         sliver = MediaQuery(
           data: mediaQuery.copyWith(
-            padding:
-                scrollDirection == Axis.vertical
-                    ? mediaQueryHorizontalPadding
-                    : mediaQueryVerticalPadding,
+            padding: scrollDirection == Axis.vertical
+                ? mediaQueryHorizontalPadding
+                : mediaQueryVerticalPadding,
           ),
           child: sliver,
         );
