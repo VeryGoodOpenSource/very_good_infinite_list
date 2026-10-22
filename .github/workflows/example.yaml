@@ -21,6 +21,7 @@ jobs:
     with:
       runs_on: macos-latest
       flutter_channel: stable
+      run_bloc_lint: true
       flutter_version: "3.47.x"
       working_directory: example
       min_coverage: 0
