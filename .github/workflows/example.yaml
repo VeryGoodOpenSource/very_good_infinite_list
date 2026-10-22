@@ -17,10 +17,11 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v2
 
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v2
     with:
       runs_on: macos-latest
       flutter_channel: stable
+      run_bloc_lint: true
       flutter_version: "3.47.x"
       working_directory: example
       min_coverage: 0
