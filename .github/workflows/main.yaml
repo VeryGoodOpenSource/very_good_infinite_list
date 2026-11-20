@@ -1,4 +1,4 @@
-name: ci
+name: very_good_infinite_list
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,15 +13,6 @@ on:
       - main
 
 jobs:
-  semantic-pull-request:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v2
-
-  spell-check:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v2
-    with:
-      includes: "**/*.md"
-      modified_files_only: false
-
   build:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v2
     with:
